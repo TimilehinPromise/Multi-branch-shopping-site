@@ -1,7 +1,7 @@
 package com.valuemart.shop.domain.service.concretes;
 
 import com.valuemart.shop.domain.ResponseMessage;
-import com.valuemart.shop.domain.models.AddressDTO;
+import com.valuemart.shop.domain.models.dto.AddressDTO;
 import com.valuemart.shop.domain.models.AddressModel;
 import com.valuemart.shop.domain.models.UserUpdate;
 import com.valuemart.shop.domain.service.abstracts.UserService;
@@ -58,9 +58,10 @@ public class UserServiceImpl implements UserService {
         addressRepository.save(Address.builder().user(user).street(address.getStreet())
                 .city(address.getCity())
                 .landmark(address.getLandmark())
+                        .name(address.getName())
                         .build()
                 );
-        return ResponseMessage.builder().message("Address added successfully").build();
+        return ResponseMessage.builder().message(address.getName().toLowerCase() +"  Address added successfully").build();
     }
 
 

@@ -77,6 +77,7 @@ CREATE TABLE token_store (
 CREATE TABLE address (
                          id BIGSERIAL PRIMARY KEY,
                          user_id BIGINT,
+                         name VARCHAR(225),
                          street VARCHAR(255),
                          preferred BOOLEAN DEFAULT FALSE,
                          city VARCHAR(255),
@@ -85,5 +86,73 @@ CREATE TABLE address (
                          updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                          CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users (id)
 );
+
+
+CREATE TABLE branch (
+                        id BIGSERIAL PRIMARY KEY,
+                        name VARCHAR(255) NOT NULL UNIQUE,
+                        location VARCHAR(255) NOT NULL,
+                        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE business_category (
+                                   id SERIAL PRIMARY KEY,
+                                   name VARCHAR(255) NOT NULL,
+                                   is_deleted BOOLEAN NOT NULL,
+                                   photo VARCHAR(255),
+                                   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE business_subcategory (
+                                      id SERIAL PRIMARY KEY,
+                                      name VARCHAR(255) NOT NULL,
+                                      category_id INT NOT NULL,
+                                      is_deleted BOOLEAN NOT NULL,
+                                      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                      FOREIGN KEY (category_id) REFERENCES business_category (id)
+);
+
+
+CREATE TABLE product (
+                         id BIGSERIAL PRIMARY KEY,
+                         name VARCHAR(255) NOT NULL UNIQUE,
+                         sku_id VARCHAR(255) NOT NULL UNIQUE,
+                         description TEXT NOT NULL,
+                         brand VARCHAR(255),
+                         price NUMERIC NOT NULL,
+                         deleted BOOLEAN NOT NULL,
+                         enabled BOOLEAN NOT NULL,
+                         sub_category_id BIGINT,
+                         category_id BIGINT,
+                         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         FOREIGN KEY (sub_category_id) REFERENCES business_subcategory (id),
+                         FOREIGN KEY (category_id) REFERENCES business_category (id)
+);
+
+
+
+CREATE TABLE product_branch (
+                                product_id BIGINT NOT NULL,
+                                branch_id BIGINT NOT NULL,
+                                PRIMARY KEY (product_id, branch_id),
+                                FOREIGN KEY (product_id) REFERENCES product (id),
+                                FOREIGN KEY (branch_id) REFERENCES branch (id)
+);
+
+CREATE TABLE product_images (
+                                id BIGSERIAL PRIMARY KEY,
+                                product_id BIGINT NOT NULL,
+                                image_url VARCHAR(255) NOT NULL,
+                                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                FOREIGN KEY (product_id) REFERENCES product (id)
+);
+
+
+
 
 

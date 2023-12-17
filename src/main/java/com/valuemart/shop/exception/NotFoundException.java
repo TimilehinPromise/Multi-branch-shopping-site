@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.client.HttpClientErrorException;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class NotFoundException extends HttpClientErrorException {
+public class NotFoundException extends RuntimeException {
 
-    public NotFoundException(String statusText) {
-        super(HttpStatus.NOT_FOUND, statusText);
+    public NotFoundException(String message) {
+        super(message);
     }
 }

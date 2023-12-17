@@ -1,12 +1,14 @@
 package com.valuemart.shop.persistence.entity;
 
+import com.valuemart.shop.domain.ProductImageModel;
 import com.valuemart.shop.domain.models.ProductModel;
+import com.valuemart.shop.domain.models.dto.ProductDTO;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Builder
@@ -26,14 +28,15 @@ public class Product extends BasePersistentEntity implements ToModel {
     private String name;
     @Column(nullable = false)
     private String description;
+    private String brand;
     @Column(nullable = false,name = "price")
     private BigDecimal price;
-    @Column(nullable = false)
-    private String image;
     @Column(nullable = false)
     private boolean deleted;
     @Column(nullable = false)
     private boolean enabled;
+    @Column(nullable = false)
+    private String skuId;
     @ManyToOne
     @JoinColumn(name = "sub_category_id")
     private BusinessSubcategory businessSubcategory;
@@ -42,27 +45,68 @@ public class Product extends BasePersistentEntity implements ToModel {
     @JoinColumn(name = "category_id")
     private BusinessCategory businessCategory;
 
+    @ManyToMany
+    @JoinTable(
+            name = "product_branch",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "branch_id")
+    )
+    private Set<Branch> branches = new HashSet<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductImage> images  = new ArrayList<>();
+
+    public static class ProductBuilder {
+        private Set<Branch> branches = new HashSet<>();
+        private List<ProductImage> images = new ArrayList<>();
+
+        // Custom builder methods
+    }
+
 
     public ProductModel toModel() {
+        List<ProductImageModel> imageModels = new ArrayList<>();
+        if (images != null) {
+            for (ProductImage image : images) {
+                imageModels.add(new ProductImageModel(image.getImageUrl()));
+            }
+        }
+
         return ProductModel.builder()
-                .id(this.id)
                 .name(this.name)
+                .skuId(this.skuId)
+                .brand(this.brand)
                 .description(this.description)
-                .image(this.image)
-                .categoryName(this.businessCategory.getName())
-                .subcategoryName(this.businessSubcategory.getName())
+                .categoryName(this.businessCategory != null ? this.businessCategory.getName() : null)
+                .subcategoryName(this.businessSubcategory != null ? this.businessSubcategory.getName() : null)
+                .price(this.price)
                 .createdAt(this.createdAt)
                 .updatedAt(this.updatedAt)
                 .enabled(this.enabled)
+                .images(imageModels) // Adding the list of image models
                 .build();
     }
 
-    public static Product fromModel(ProductModel model) {
+
+    public void addImage(ProductImage image) {
+        images.add(image);
+        image.setProduct(this);
+    }
+
+    // Method to remove an image
+    public void removeImage(ProductImage image) {
+        images.remove(image);
+        image.setProduct(null);
+    }
+
+    public static Product fromModel(ProductDTO dto) {
         return Product.builder()
-                .name(model.getName())
-                .description(model.getDescription())
-                .price(model.getPrice())
-                .image(model.getImage())
+                .name(dto.getName())
+                .brand(dto.getBrand())
+                .description(dto.getDescription())
+                .price(dto.getPrice())
+                .enabled(dto.isEnabled())
+                .deleted(false)
                 .build();
     }
 

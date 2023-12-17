@@ -1,4 +1,4 @@
-package com.valuemart.shop.domain.models;
+package com.valuemart.shop.domain.models.dto;
 
 import com.valuemart.shop.persistence.entity.Authority;
 import com.valuemart.shop.persistence.entity.User;

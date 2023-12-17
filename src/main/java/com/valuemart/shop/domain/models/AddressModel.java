@@ -7,6 +7,7 @@ import lombok.Data;
 @Builder
 public class AddressModel {
     private Long addressId;
+    private String name;
     private String street;
     private String landmark;
     private String city;

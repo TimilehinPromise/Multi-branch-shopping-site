@@ -2,6 +2,7 @@ package com.valuemart.shop.controller;
 
 import com.valuemart.shop.domain.ResponseMessage;
 import com.valuemart.shop.domain.models.*;
+import com.valuemart.shop.domain.models.dto.AddressDTO;
 import com.valuemart.shop.domain.service.abstracts.UserService;
 import com.valuemart.shop.persistence.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,10 +28,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping
-    public void findAll(@PageableDefault(sort = "id", direction = DESC) Pageable pageable) {
-
-    }
 
     @PostMapping("/update")
     public ResponseMessage updateProfile(@Valid @RequestBody UserUpdate request) {

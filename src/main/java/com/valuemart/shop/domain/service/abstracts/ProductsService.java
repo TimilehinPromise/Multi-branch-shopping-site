@@ -1,0 +1,32 @@
+package com.valuemart.shop.domain.service.abstracts;
+
+import com.valuemart.shop.domain.ResponseMessage;
+import com.valuemart.shop.domain.models.ProductModel;
+import com.valuemart.shop.domain.models.dto.ProductDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+
+public interface ProductsService {
+    ResponseMessage createProduct(ProductDTO dto);
+
+    Page<ProductModel> getAllProduct(Pageable pageable);
+
+    Page<ProductModel>  getAllProductByCategory(Long id,Pageable pageable);
+
+    Page<ProductModel>  getAllProductBySubCategory(Long id,Pageable pageable);
+
+    ProductModel getProductBySkuId(String skuId);
+
+    List<ProductModel> getProductRelatedBy(String related, String keyword,String sku);
+
+    Page<ProductModel> filterProducts(String skuId,
+                                      Long productName,
+                                      String branch,
+                                      Pageable pageable);
+
+    Page<ProductModel> searchProducts(String keyword,
+                                      Long branchId,
+                                      Pageable pageable);
+}

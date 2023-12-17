@@ -1,41 +1,40 @@
-package com.valuemart.shop.domain.models;
+package com.valuemart.shop.domain.models.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.valuemart.shop.domain.ProductImageModel;
-import com.valuemart.shop.persistence.entity.Product;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
-@Builder
-@Data
-@Accessors(chain = true)
-public class ProductModel {
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ProductDTO {
 
     @NotBlank
     private String name;
-    private String skuId;
     @NotBlank
     private String description;
     private String brand;
     private List<ProductImageModel> images;
-    @NotBlank
-    private String categoryName;
-    @NotBlank
-    private String subcategoryName;
+    @NotNull
+    private Long categoryId;
+    @NotNull
+    @JsonProperty("subcategoryId")
+    private Long subCategoryId;
     @NotNull
     @Min(1)
     private BigDecimal price;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     private boolean enabled;
-
+    private boolean availableInBranch1;
+    private boolean availableInBranch2;
+    private boolean availableInBranch3;
 
 }

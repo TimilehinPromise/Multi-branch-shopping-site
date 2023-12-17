@@ -1,18 +1,13 @@
 package com.valuemart.shop.domain.models;
 
 
-import com.valuemart.shop.persistence.entity.User;
-import lombok.Builder;
+import com.valuemart.shop.domain.models.dto.UserDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
-
-
-
-import static java.util.Collections.emptySet;
 
 
 @NoArgsConstructor

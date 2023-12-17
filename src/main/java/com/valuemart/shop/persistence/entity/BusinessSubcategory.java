@@ -19,23 +19,17 @@ public class BusinessSubcategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
-
-    @Column(name="category_id", insertable = false, updatable = false)
-    private int categoryId;
+    private Long id;
 
     @Column(name="name")
     private String name;
 
-
-    //bi-directional many-to-one association to BusinessCategory
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name="category_id")
     private BusinessCategory businessCategory;
 
-    //bi-directional many-to-one association to Product
+
     @JsonIgnore
     @OneToMany(mappedBy="businessSubcategory")
     private List<Product> products;

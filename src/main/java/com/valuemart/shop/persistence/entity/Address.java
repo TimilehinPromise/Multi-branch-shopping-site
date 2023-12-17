@@ -24,6 +24,8 @@ public class Address extends BasePersistentEntity{
 
     private String street;
 
+    private String name;
+
     private boolean preferred;
 
     private String city;
@@ -34,6 +36,7 @@ public class Address extends BasePersistentEntity{
         return AddressModel.builder()
                 .addressId(id)
                 .street(street)
+                .name(name)
                 .city(city)
                 .landmark(landmark)
                 .preferred(preferred)

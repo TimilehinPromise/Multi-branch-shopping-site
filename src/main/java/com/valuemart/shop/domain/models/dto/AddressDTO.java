@@ -1,4 +1,4 @@
-package com.valuemart.shop.domain.models;
+package com.valuemart.shop.domain.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.valuemart.shop.persistence.entity.User;
@@ -10,6 +10,5 @@ public class AddressDTO {
     private String street;
     private String landmark;
     private String city;
-
-
+    private String name;
 }

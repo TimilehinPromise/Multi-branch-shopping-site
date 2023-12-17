@@ -1,7 +1,7 @@
 package com.valuemart.shop.domain.service.abstracts;
 
 import com.valuemart.shop.domain.ResponseMessage;
-import com.valuemart.shop.domain.models.AddressDTO;
+import com.valuemart.shop.domain.models.dto.AddressDTO;
 import com.valuemart.shop.domain.models.AddressModel;
 import com.valuemart.shop.domain.models.UserUpdate;
 import com.valuemart.shop.persistence.entity.User;
