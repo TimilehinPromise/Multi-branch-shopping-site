@@ -5,11 +5,14 @@ import com.valuemart.shop.domain.models.ProductModel;
 import com.valuemart.shop.domain.models.dto.ProductDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface ProductsService {
     ResponseMessage createProduct(ProductDTO dto);
+
+    ResponseMessage updateProduct(ProductDTO dto);
 
     Page<ProductModel> getAllProduct(Pageable pageable);
 
@@ -29,4 +32,7 @@ public interface ProductsService {
     Page<ProductModel> searchProducts(String keyword,
                                       Long branchId,
                                       Pageable pageable);
+
+    List<String> processExcelFileToDeviceGroup(MultipartFile file);
+
 }

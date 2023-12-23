@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Optional;
 
+import static com.valuemart.shop.domain.models.RoleType.ADMIN;
+
 
 @Slf4j
 @Service
@@ -40,13 +42,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public LoginResponseModel customerLogin(CustomerLoginDTO loginDTO) {
-        try {
+
             System.out.println(loginDTO);
             return loginCustomer(loginDTO);
-        } catch (Exception e) {
-//            throw new ValuePlusException(e.getMessage(), UNAUTHORIZED);
-        }
-        return null;
+
     }
 
     private LoginResponseModel loginCustomer(CustomerLoginDTO loginForm) {
@@ -75,7 +74,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         try {
 
             Role role = roleRepository.findFirstByName(RoleType.CUSTOMER.name());
-            log.info(role.toString());
             if (!userRepository.existsUserByEmail(userCreate.getEmail())){
              userRepository.save(User.builder().
                     enabled(false).
@@ -93,7 +91,35 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }}
 
         catch (Exception e){
+            log.info("error creating a customer"+ e);
+        }
 
+        return null;
+    }
+
+    @Override
+    public ResponseMessage createAdmin(UserCreate userCreate){
+        try {
+
+            Role role = roleRepository.findFirstByName(ADMIN.name());
+            if (!userRepository.existsUserByEmail(userCreate.getEmail())){
+                userRepository.save(User.builder().
+                        enabled(false).
+                        email(userCreate.getEmail()).
+                        firstName(userCreate.getFirstname()).
+                        lastName(userCreate.getLastname())
+                        .role(role)
+                        .password(passwordEncoder.encode(userCreate.getPassword()))
+                        .enabled(true)
+                        .authorities(Collections.emptyList())
+                        .build());
+                log.info("Admin successfully created");
+                return ResponseMessage.builder().message("Admin Signed Up Successfully").build();
+
+            }}
+
+        catch (Exception e){
+            log.info("error creating a admin"+ e);
         }
 
         return null;
@@ -144,5 +170,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             System.out.println(user);
             throw invalidCredentialException();
         }
+    }
+
+    private void ensureUserIsAdmin(User user)  {
+        if (!isAdmin(user)) {
+            throw invalidCredentialException();
+        }
+    }
+
+    public static boolean isAdmin(User user) {
+        return ADMIN.name().equals(user.getRole().getName());
     }
 }

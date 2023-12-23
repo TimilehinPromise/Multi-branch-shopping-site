@@ -15,4 +15,6 @@ public interface AuthenticationService {
 
 
     ResponseMessage createCustomer(UserCreate userCreate);
+
+    ResponseMessage createAdmin(UserCreate userCreate);
 }

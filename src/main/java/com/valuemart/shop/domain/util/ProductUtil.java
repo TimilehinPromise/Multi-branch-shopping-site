@@ -1,6 +1,8 @@
 package com.valuemart.shop.domain.util;
 
 import com.valuemart.shop.persistence.entity.Product;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
 
 public final class ProductUtil {
 
@@ -35,6 +37,11 @@ public final class ProductUtil {
 
         // Combine the attributes with some delimiters
         return "SKU-" + productNamePrefix + "-" + randomNo + "-" + subcategoryId + "-" + categoryId;
+    }
+
+    public static String getFormattedCellValue(String cellValue) {
+
+        return cellValue.replace('_', ' ');
     }
 
 

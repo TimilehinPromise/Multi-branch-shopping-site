@@ -19,6 +19,7 @@ public class UserCreate {
     @NotEmpty
     private String lastname;
     private String password;
+    private String branchId;
     @NotEmpty
     @Email
     private String email;

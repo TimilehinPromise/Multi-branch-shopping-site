@@ -23,6 +23,8 @@ CREATE TABLE users (
                        last_name VARCHAR(255) NOT NULL,
                        password VARCHAR(255) NOT NULL,
                        email VARCHAR(255) NOT NULL UNIQUE,
+                       branch_id INT NOT NULL,
+                       royalty_code VARCHAR(255) UNIQUE,
                        phone VARCHAR(255),
                        email_verified BOOLEAN DEFAULT FALSE,
                        retries INT DEFAULT 0,
@@ -62,7 +64,7 @@ CREATE TABLE orders (
 );
 
 -- Additional scripts to populate roles and authorities if needed
-INSERT INTO role (name) VALUES ('CUSTOMER'), ('ADMIN');
+INSERT INTO role (name) VALUES ('CUSTOMER'), ('ADMIN'), ('SUPER-ADMIN');
 -- INSERT INTO authorities (authority) VALUES ('READ_PRIVILEGE'), ('WRITE_PRIVILEGE');
 
 CREATE TABLE token_store (

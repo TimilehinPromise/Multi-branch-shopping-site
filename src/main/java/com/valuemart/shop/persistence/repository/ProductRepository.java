@@ -24,10 +24,14 @@ public interface ProductRepository extends JpaRepository<Product,Long>, JpaSpeci
 
     Optional<Product>findFirstBySkuIdAndDeletedFalse(String skuId);
 
+    Optional<Product> findFirstByNameAndDeletedFalse(String name);
+
 
     List<Product> findAllByBrandAndDeletedFalseAndSkuIdNot(String brand,String skuId);
 
     List<Product> findAllByBusinessSubcategoryIdAndDeletedFalseAndSkuIdNot(Long subCategoryId,String skuId);
+
+    Boolean existsProductByNameIgnoreCaseAndSkuIdNot(String name, String skuId);
 
 
 

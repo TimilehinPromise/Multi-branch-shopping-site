@@ -3,6 +3,7 @@ package com.valuemart.shop.domain.models.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.valuemart.shop.domain.ProductImageModel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ProductDTO {
 
     @NotBlank
@@ -36,5 +38,6 @@ public class ProductDTO {
     private boolean availableInBranch1;
     private boolean availableInBranch2;
     private boolean availableInBranch3;
+    private String skuId;
 
 }

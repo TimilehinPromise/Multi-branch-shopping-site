@@ -37,4 +37,16 @@ public class AuthController {
         log.info("customer signup ".concat( userCreate.toString()));
         return authenticationService.createCustomer(userCreate);
     }
+
+
+    @PostMapping("/signup/admin")
+    public ResponseMessage adminSignUp(@Valid @RequestBody UserCreate userCreate) {
+        log.info("admin signup ".concat( userCreate.toString()));
+        return authenticationService.createCustomer(userCreate);
+    }
+
+    @PostMapping("/login/admin")
+    public LoginResponseModel adminLogin(@Valid @RequestBody CustomerLoginDTO loginForm) {
+        return authenticationService.customerLogin(loginForm);
+    }
 }
