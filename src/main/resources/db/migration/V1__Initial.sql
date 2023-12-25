@@ -153,6 +153,50 @@ CREATE TABLE product_images (
                                 updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                 FOREIGN KEY (product_id) REFERENCES product (id)
 );
+-- Create the 'loyalty' table
+CREATE TABLE loyalty (
+                         id BIGSERIAL PRIMARY KEY,
+                         required_amount DECIMAL NOT NULL,
+                         coin_no VARCHAR(255) NOT NULL,
+                         discount_value DECIMAL NOT NULL,
+                         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create the 'wallet' table
+CREATE TABLE wallet (
+                        id BIGSERIAL PRIMARY KEY,
+                        amount DECIMAL NOT NULL,
+                        coin_no BIGINT NOT NULL,
+                        user_id BIGINT UNIQUE,
+                        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Update the 'users' table to include the 'wallet_id' column
+ALTER TABLE users
+    ADD COLUMN wallet_id BIGINT UNIQUE,
+ADD CONSTRAINT fk_wallet
+FOREIGN KEY (wallet_id) REFERENCES wallet(id);
+
+
+-- Create the 'cart' table
+CREATE TABLE cart (
+                      id BIGSERIAL PRIMARY KEY,
+                      product_id BIGINT,
+                      user_id BIGINT NOT NULL,
+                      price DECIMAL NOT NULL,
+                      quantity INTEGER NOT NULL,
+                      created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                      updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                      FOREIGN KEY (product_id) REFERENCES product(id),
+                      FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+
+
+
 
 
 

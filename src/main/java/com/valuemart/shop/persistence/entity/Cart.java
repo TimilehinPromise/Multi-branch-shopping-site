@@ -1,6 +1,7 @@
 package com.valuemart.shop.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -8,15 +9,17 @@ import java.util.Date;
 
 @Entity
 @Table(name="cart")
-public class Cart {
+@Builder
+@NoArgsConstructor
+@Setter
+@Getter
+@AllArgsConstructor
+public class Cart extends BasePersistentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    @Column(name = "created_date")
-    private Date createdDate;
 
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
@@ -33,62 +36,17 @@ public class Cart {
 
     private int quantity;
 
-    public Cart() {
-    }
 
-    public Cart(Product product, int quantity, User user, BigDecimal price){
-        this.user = user;
-        this.product = product;
-        this.quantity = quantity;
-        this.createdDate = new Date();
-        this.price = price;
-    }
 
-    public Long getId() {
-        return id;
-    }
+//    public Cart() {
+//    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+//    public Cart(Product product, int quantity, User user, BigDecimal price){
+//        this.user = user;
+//        this.product = product;
+//        this.quantity = quantity;
+//        this.price = price;
+//    }
 
-    public User getUser() {
-        return user;
-    }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
 }

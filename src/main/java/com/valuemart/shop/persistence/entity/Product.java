@@ -45,7 +45,7 @@ public class Product extends BasePersistentEntity implements ToModel {
     @JoinColumn(name = "category_id")
     private BusinessCategory businessCategory;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "product_branch",
             joinColumns = @JoinColumn(name = "product_id"),
@@ -81,7 +81,7 @@ public class Product extends BasePersistentEntity implements ToModel {
                 .subcategoryName(this.businessSubcategory != null ? this.businessSubcategory.getName() : null)
                 .price(this.price)
                 .createdAt(this.createdAt)
-                .updatedAt(this.updatedAt)
+//                .updatedAt(this.updatedAt)
                 .enabled(this.enabled)
                 .images(imageModels) // Adding the list of image models
                 .build();

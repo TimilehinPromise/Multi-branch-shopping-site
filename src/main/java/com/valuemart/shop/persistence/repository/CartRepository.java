@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface CartRepository extends JpaRepository<Cart, Long> {
-    List<Cart> findAllByUserOrderByCreatedDateDesc(User user);
+    List<Cart> findAllByUserOrderByCreatedAtDesc(User user);
+
+    boolean existsByIdAndUser(Long cartId, User user);
 
     List<Cart> deleteByUser(User user);
 }

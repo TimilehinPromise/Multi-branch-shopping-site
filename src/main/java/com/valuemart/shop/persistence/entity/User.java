@@ -66,6 +66,9 @@ public class User extends BasePersistentEntity implements UserDetails, ToModel {
     @Column(name = "activated")
     private boolean activated ;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = EAGER)
+    private Wallet wallet;
+
 
 
 

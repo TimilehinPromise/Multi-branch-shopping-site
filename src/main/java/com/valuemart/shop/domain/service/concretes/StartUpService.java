@@ -34,9 +34,11 @@ public class StartUpService {
     private final AuthorityRepository authorityRepository;
     private final ProductsService productsService;
     private final ProductRepository  productRepository;
+    private final LoyaltyRepository loyaltyRepository;
 
 
     private static final String DEFAULT_ADMIN_EMAIL = "valuemart@gmail.com";
+
 
     public CompletableFuture<Void> loadDefaultData() {
         return runAsync(() -> {
@@ -94,6 +96,14 @@ public class StartUpService {
                         .build();
                 productsService.createProduct(productDTO);
                 log.info("Product successfully created");
+            }
+            if (loyaltyRepository.findAll().isEmpty()){
+                Loyalty loyalty = Loyalty.builder()
+                        .requiredAmount(BigDecimal.valueOf(2000))
+                        .coinNo(100)
+                        .discountValue(BigDecimal.valueOf(80))
+                        .build();
+                loyaltyRepository.save(loyalty);
             }
 
             Optional<User> user = userRepository.findByEmailAndDeletedFalse(DEFAULT_ADMIN_EMAIL);
