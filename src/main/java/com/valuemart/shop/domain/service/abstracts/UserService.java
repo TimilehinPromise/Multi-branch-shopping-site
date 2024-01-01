@@ -11,7 +11,11 @@ import org.springframework.data.domain.Pageable;
 public interface UserService {
     ResponseMessage updateProfile(UserUpdate userUpdate);
 
+    User getUser(Long userId);
+
     ResponseMessage addAddress(AddressDTO address, User user);
+
+    void checkIfBranchHasBeenSet(User user);
 
     ResponseMessage setPreferredAddress(Long userId, Long addressId);
 

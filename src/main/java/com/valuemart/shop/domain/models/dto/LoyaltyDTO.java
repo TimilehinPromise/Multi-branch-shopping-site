@@ -6,10 +6,7 @@ import java.math.BigDecimal;
 
 @Data
 public class LoyaltyDTO {
-
-    private BigDecimal requiredAmount;
-
-    private int coinNo;
+    private Long count;
 
     private BigDecimal discountValue;
 

@@ -99,9 +99,8 @@ public class StartUpService {
             }
             if (loyaltyRepository.findAll().isEmpty()){
                 Loyalty loyalty = Loyalty.builder()
-                        .requiredAmount(BigDecimal.valueOf(2000))
-                        .coinNo(100)
-                        .discountValue(BigDecimal.valueOf(80))
+                        .count(5L)
+                        .discountValue(BigDecimal.valueOf(200))
                         .build();
                 loyaltyRepository.save(loyalty);
             }

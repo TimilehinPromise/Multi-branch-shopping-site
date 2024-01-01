@@ -9,9 +9,7 @@ import java.math.BigDecimal;
 @Data
 public class LoyaltyModel {
 
-    private BigDecimal requiredAmount;
-
-    private int coinNo;
+    private Long count;
 
     private BigDecimal discountValue;
 }

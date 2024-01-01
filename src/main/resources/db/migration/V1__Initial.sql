@@ -48,20 +48,6 @@ CREATE TABLE user_authority (
                                 CONSTRAINT fk_authority FOREIGN KEY (authority_id) REFERENCES authorities (id)
 );
 
--- Create orders table
-CREATE TABLE orders (
-                        id BIGSERIAL PRIMARY KEY,
-                        sku_id VARCHAR(255),
-                        customer_name VARCHAR(255),
-                        amount NUMERIC,
-                        customer_address TEXT,
-                        customer_phone VARCHAR(255),
-                        status VARCHAR(255),
-                        user_id BIGINT,
-                        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                        CONSTRAINT fk_user_orders FOREIGN KEY (user_id) REFERENCES users (id)
-);
 
 -- Additional scripts to populate roles and authorities if needed
 INSERT INTO role (name) VALUES ('CUSTOMER'), ('ADMIN'), ('SUPER-ADMIN');
@@ -156,8 +142,7 @@ CREATE TABLE product_images (
 -- Create the 'loyalty' table
 CREATE TABLE loyalty (
                          id BIGSERIAL PRIMARY KEY,
-                         required_amount DECIMAL NOT NULL,
-                         coin_no VARCHAR(255) NOT NULL,
+                         count BIGINT NOT NULL,
                          discount_value DECIMAL NOT NULL,
                          created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                          updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -167,7 +152,7 @@ CREATE TABLE loyalty (
 CREATE TABLE wallet (
                         id BIGSERIAL PRIMARY KEY,
                         amount DECIMAL NOT NULL,
-                        coin_no BIGINT NOT NULL,
+                        count BIGINT NOT NULL,
                         user_id BIGINT UNIQUE,
                         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -193,6 +178,37 @@ CREATE TABLE cart (
                       FOREIGN KEY (product_id) REFERENCES product(id),
                       FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+CREATE TABLE orders (
+                        id BIGSERIAL PRIMARY KEY,
+                        amount DECIMAL NOT NULL,
+                        discounted_amount DECIMAL NOT NULL,
+                        address VARCHAR(255) NOT NULL,
+                        status VARCHAR(50) NOT NULL,
+                        user_id BIGINT,
+                        payment_provider VARCHAR(100),
+                        details TEXT,
+                        from_checkout BOOLEAN NOT NULL DEFAULT TRUE,
+                        message VARCHAR(255),
+                        product VARCHAR(255),
+                        branch_id BIGINT NOT NULL,
+                        created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                        FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE payment (
+                         reference_id VARCHAR(255) NOT NULL,
+                         user_id VARCHAR(255) NOT NULL,
+                         amount DECIMAL NOT NULL,
+                         status VARCHAR(255) NOT NULL,
+                         provider VARCHAR(255) NOT NULL,
+                         provider_response VARCHAR(255),
+                         created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                         updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                         PRIMARY KEY (reference_id, user_id)
+);
+
 
 
 

@@ -1,0 +1,28 @@
+version: '3'
+services:
+  db:
+    image: timmybot/my-postgres-db:v2.0
+    restart: always
+    container_name: postgres-db
+    environment:
+      POSTGRES_DB: valuemart-dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+
+  value-mart-shop:
+    image: timmybot/valuemart-shop:v1.0  # Docker Hub image
+    container_name: value-mart-shop
+    ports:
+      - "9010:9010"
+    restart: always
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/valuemart-dev
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+
+volumes:
+  db-data:

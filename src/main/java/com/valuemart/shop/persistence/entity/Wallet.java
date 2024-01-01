@@ -23,7 +23,7 @@ public class Wallet extends BasePersistentEntity {
 
     private BigDecimal amount;
 
-    private String coinNo;
+    private Long count;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id")

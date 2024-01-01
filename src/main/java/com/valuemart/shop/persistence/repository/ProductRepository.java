@@ -24,6 +24,9 @@ public interface ProductRepository extends JpaRepository<Product,Long>, JpaSpeci
 
     Optional<Product>findFirstBySkuIdAndDeletedFalse(String skuId);
 
+    Optional<Product> findFirstBySkuIdAndDeletedFalseAndBranches_Id(String skuId, Long branchId);
+
+
     Optional<Product> findFirstByNameAndDeletedFalse(String name);
 
 

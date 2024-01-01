@@ -80,6 +80,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     email(userCreate.getEmail()).
                     firstName(userCreate.getFirstname()).
                     lastName(userCreate.getLastname())
+                             .branchId(Integer.parseInt(userCreate.getBranchId()))
                     .role(role)
                     .password(passwordEncoder.encode(userCreate.getPassword()))
                     .enabled(true)

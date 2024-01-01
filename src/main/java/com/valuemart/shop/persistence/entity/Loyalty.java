@@ -22,18 +22,16 @@ public class Loyalty extends BasePersistentEntity implements ToModel{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private BigDecimal requiredAmount;
-
-    private int coinNo;
+    private Long count;
 
     private BigDecimal discountValue;
+
 
     @Override
     public LoyaltyModel toModel() {
         return LoyaltyModel.builder()
-                .coinNo(this.coinNo)
-                .requiredAmount(this.requiredAmount)
                 .discountValue(this.discountValue)
+                .count(count)
                 .build();
     }
 }

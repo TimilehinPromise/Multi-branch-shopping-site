@@ -2,6 +2,7 @@ package com.valuemart.shop.persistence.entity;
 
 
 import com.valuemart.shop.domain.models.AgentDto;
+import com.valuemart.shop.domain.models.UserModel;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -135,7 +136,15 @@ public class User extends BasePersistentEntity implements UserDetails, ToModel {
 
 
     @Override
-    public Object toModel() {
-        return AgentDto.valueOf(this);
+    public UserModel toModel() {
+        return UserModel.builder()
+                .firstname(firstName)
+                .lastname(lastName)
+                .email(email)
+                .phone(phone)
+                .emailVerified(emailVerified)
+                .royaltyCode(royaltyCode)
+                .branchId(branchId)
+                .build();
     }
 }

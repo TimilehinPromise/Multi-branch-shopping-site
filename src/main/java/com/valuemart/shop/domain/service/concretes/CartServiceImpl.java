@@ -33,9 +33,11 @@ public class CartServiceImpl implements CartService {
     @Override
     public ResponseMessage addToCart(CartDto dto, User user){
 
-       Optional<Product> productOptional = productRepository.findFirstBySkuIdAndDeletedFalse(dto.getSkuId());
+        productExistInCart(dto.getSkuId(), user);
+
+       Optional<Product> productOptional = productRepository.findFirstBySkuIdAndDeletedFalseAndBranches_Id(dto.getSkuId(), Long.valueOf(user.getBranchId()));
        if (productOptional.isEmpty()){
-           throw new BadRequestException("Product Does Not Exist");
+           throw new BadRequestException("Product Does Not Exist or Not Available for branch");
        }
        Product product = productOptional.get();
         Cart cart = Cart.builder()
@@ -48,6 +50,17 @@ public class CartServiceImpl implements CartService {
 
         return ResponseMessage.builder().message( product.getName() +" Added to Cart").build();
     }
+
+
+    public void productExistInCart(String skuId, User user) {
+        boolean productExists = cartRepository.findAllByUserOrderByCreatedAtDesc(user).stream()
+                .anyMatch(cart -> skuId.equals(cart.getProduct().getSkuId()));
+
+        if (productExists) {
+            throw new BadRequestException("Product Already In the Cart");
+        }
+    }
+
 
     @Override
     public CartModel listCartItems(User user) {

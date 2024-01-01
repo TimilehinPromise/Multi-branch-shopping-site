@@ -5,6 +5,7 @@ import com.valuemart.shop.domain.models.dto.AddressDTO;
 import com.valuemart.shop.domain.models.AddressModel;
 import com.valuemart.shop.domain.models.UserUpdate;
 import com.valuemart.shop.domain.service.abstracts.UserService;
+import com.valuemart.shop.exception.BadRequestException;
 import com.valuemart.shop.exception.NotFoundException;
 import com.valuemart.shop.persistence.entity.Address;
 import com.valuemart.shop.persistence.entity.User;
@@ -54,6 +55,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUser(Long userId){
+       return userRepository.findById(userId).orElseThrow();
+    }
+
+    @Override
     public ResponseMessage addAddress(AddressDTO address, User user){
         addressRepository.save(Address.builder().user(user).street(address.getStreet())
                 .city(address.getCity())
@@ -62,6 +68,14 @@ public class UserServiceImpl implements UserService {
                         .build()
                 );
         return ResponseMessage.builder().message(address.getName().toLowerCase() +"  Address added successfully").build();
+    }
+
+    @Override
+    public void checkIfBranchHasBeenSet(User user){
+       User user1 = userRepository.findById(user.getId()).orElseThrow();
+       if (user1.getBranchId() == 0){
+           throw new BadRequestException("Please set preferred branch");
+       }
     }
 
 
@@ -85,6 +99,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public AddressModel getAddressByAddressId(Long addressId, Long userId){
+        System.out.println(addressRepository.findByUserIdAndId(userId,addressId).map(Address::toModel).get());
        return addressRepository.findByUserIdAndId(userId,addressId).map(Address::toModel).get();
     }
 

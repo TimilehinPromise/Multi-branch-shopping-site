@@ -4,6 +4,7 @@ import com.valuemart.shop.domain.ResponseMessage;
 import com.valuemart.shop.domain.models.LoyaltyModel;
 import com.valuemart.shop.domain.models.dto.LoyaltyDTO;
 import com.valuemart.shop.domain.service.abstracts.LoyaltyService;
+import com.valuemart.shop.domain.service.abstracts.WalletService;
 import com.valuemart.shop.persistence.entity.Loyalty;
 import com.valuemart.shop.persistence.repository.LoyaltyRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,14 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoyaltyServiceImpl implements LoyaltyService {
 
     private final LoyaltyRepository loyaltyRepository;
+    private final WalletService walletService;
 
     @Override
     public ResponseMessage updateLoyaltyFormula(LoyaltyDTO dto){
         Loyalty existingLoyalty = loyaltyRepository.findById(1L).get();
 
-        existingLoyalty.setCoinNo(dto.getCoinNo());
         existingLoyalty.setDiscountValue(dto.getDiscountValue());
-        existingLoyalty.setRequiredAmount(dto.getRequiredAmount());
+        existingLoyalty.setCount(dto.getCount());
 
         loyaltyRepository.save(existingLoyalty);
 
@@ -36,6 +37,16 @@ public class LoyaltyServiceImpl implements LoyaltyService {
     public LoyaltyModel getLoyaltyFormula(){
        return loyaltyRepository.findById(1L).map(Loyalty::toModel).get();
     }
+
+//    public void doLoyalty(User user, BigDecimal amount){
+//       Wallet wallet = walletService.getWallet(user);
+//       if (walletService.meetCriteria(user)){
+//
+//
+//       }
+//
+//
+//    }
 
 
 }
