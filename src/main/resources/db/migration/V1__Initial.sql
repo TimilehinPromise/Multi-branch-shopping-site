@@ -50,7 +50,7 @@ CREATE TABLE user_authority (
 
 
 -- Additional scripts to populate roles and authorities if needed
-INSERT INTO role (name) VALUES ('CUSTOMER'), ('ADMIN'), ('SUPER-ADMIN');
+INSERT INTO role (name) VALUES ('CUSTOMER'), ('STAFF'), ('SUPER-ADMIN');
 -- INSERT INTO authorities (authority) VALUES ('READ_PRIVILEGE'), ('WRITE_PRIVILEGE');
 
 CREATE TABLE token_store (

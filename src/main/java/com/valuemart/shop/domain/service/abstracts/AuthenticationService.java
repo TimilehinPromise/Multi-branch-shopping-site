@@ -11,10 +11,8 @@ import javax.transaction.Transactional;
 public interface AuthenticationService {
 
 
-    LoginResponseModel customerLogin(CustomerLoginDTO loginDTO) ;
+    LoginResponseModel login(CustomerLoginDTO loginForm);
 
+    ResponseMessage signUp(UserCreate userCreate);
 
-    ResponseMessage createCustomer(UserCreate userCreate);
-
-    ResponseMessage createAdmin(UserCreate userCreate);
 }

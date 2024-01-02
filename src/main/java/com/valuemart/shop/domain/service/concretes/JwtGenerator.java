@@ -1,5 +1,6 @@
 package com.valuemart.shop.domain.service.concretes;
 
+import com.valuemart.shop.persistence.entity.User;
 import com.valuemart.shop.persistence.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
@@ -75,9 +76,10 @@ public class JwtGenerator {
     }
 
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken( User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("username", userDetails.getUsername());
+        claims.put("username", user.getUsername());
+        claims.put("role",user.getRole().getName());
         return generateClaims(claims);
     }
 

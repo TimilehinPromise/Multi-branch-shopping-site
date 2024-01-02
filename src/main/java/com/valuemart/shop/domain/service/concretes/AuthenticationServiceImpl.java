@@ -6,11 +6,15 @@ import com.valuemart.shop.domain.models.LoginResponseModel;
 import com.valuemart.shop.domain.models.RoleType;
 import com.valuemart.shop.domain.models.UserCreate;
 import com.valuemart.shop.domain.service.abstracts.AuthenticationService;
+import com.valuemart.shop.domain.util.UserUtils;
+import com.valuemart.shop.exception.BadRequestException;
 import com.valuemart.shop.exception.ValueMartRuntimeException;
 import com.valuemart.shop.exception.ValueMartException;
+import com.valuemart.shop.persistence.entity.Branch;
 import com.valuemart.shop.persistence.entity.Role;
 import com.valuemart.shop.persistence.entity.TokenStore;
 import com.valuemart.shop.persistence.entity.User;
+import com.valuemart.shop.persistence.repository.BranchRepository;
 import com.valuemart.shop.persistence.repository.RoleRepository;
 import com.valuemart.shop.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +22,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
 
 import static com.valuemart.shop.domain.models.RoleType.ADMIN;
+import static com.valuemart.shop.domain.models.RoleType.STAFF;
 
 
 @Slf4j
@@ -36,19 +42,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final RoleRepository roleRepository;
 
+    private final BranchRepository branchRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     private final TokenAuthenticationService tokenService;
 
     @Override
-    public LoginResponseModel customerLogin(CustomerLoginDTO loginDTO) {
-
-            System.out.println(loginDTO);
-            return loginCustomer(loginDTO);
-
-    }
-
-    private LoginResponseModel loginCustomer(CustomerLoginDTO loginForm) {
+    public LoginResponseModel login(CustomerLoginDTO loginForm) {
         User user = getUser(loginForm.getEmail());
         log.info(user.toString());
         log.info("user fetched");
@@ -70,23 +71,39 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    public ResponseMessage signUp(UserCreate userCreate){
+        if (userCreate.getRole().name().equals("ADMIN")){
+            return createAdmin(userCreate);
+        } else if (userCreate.getRole().name().equals("STAFF")) {
+            return createStaff(userCreate);
+        } else if (userCreate.getRole().name().equals("CUSTOMER")) {
+            return createCustomer(userCreate);
+        }
+        else throw new BadRequestException("User role not Found");
+    }
+
+
     public ResponseMessage createCustomer(UserCreate userCreate){
         try {
 
             Role role = roleRepository.findFirstByName(RoleType.CUSTOMER.name());
             if (!userRepository.existsUserByEmail(userCreate.getEmail())){
-             userRepository.save(User.builder().
-                    enabled(false).
+          User savedCustomer =   userRepository.save(User.builder().
                     email(userCreate.getEmail()).
-                    firstName(userCreate.getFirstname()).
-                    lastName(userCreate.getLastname())
+                    deleted(false).
+                    activated(true).
+                    firstName(userCreate.getFirstName()).
+                    lastName(userCreate.getLastName())
                              .branchId(Integer.parseInt(userCreate.getBranchId()))
                     .role(role)
                     .password(passwordEncoder.encode(userCreate.getPassword()))
                     .enabled(true)
                             .authorities(Collections.emptyList())
                     .build());
-            log.info("User successfully created");
+                String customerRoyaltyCode = UserUtils.generateCustomerCode(savedCustomer.getFirstName().concat(" ").concat(savedCustomer.getLastName()),savedCustomer.getId(), LocalDateTime.now());
+                savedCustomer.setRoyaltyCode(customerRoyaltyCode);
+                userRepository.save(savedCustomer);
+            log.info("Customer successfully created");
         return ResponseMessage.builder().message("Customer Signed Up Successfully").build();
 
         }}
@@ -98,17 +115,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return null;
     }
 
-    @Override
+
     public ResponseMessage createAdmin(UserCreate userCreate){
         try {
 
             Role role = roleRepository.findFirstByName(ADMIN.name());
             if (!userRepository.existsUserByEmail(userCreate.getEmail())){
                 userRepository.save(User.builder().
-                        enabled(false).
+                        enabled(true).
                         email(userCreate.getEmail()).
-                        firstName(userCreate.getFirstname()).
-                        lastName(userCreate.getLastname())
+                        firstName(userCreate.getFirstName()).
+                        lastName(userCreate.getLastName())
                         .role(role)
                         .password(passwordEncoder.encode(userCreate.getPassword()))
                         .enabled(true)
@@ -121,6 +138,35 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         catch (Exception e){
             log.info("error creating a admin"+ e);
+        }
+
+        return null;
+    }
+
+
+    public ResponseMessage createStaff(UserCreate userCreate){
+        try {
+
+            Role role = roleRepository.findFirstByName(STAFF.name());
+            Branch branch = branchRepository.findById(Long.valueOf(userCreate.getBranchId())).orElseThrow();
+            if (!userRepository.existsUserByEmail(userCreate.getEmail())){
+                userRepository.save(User.builder().
+                        email(userCreate.getEmail()).
+                        firstName(userCreate.getFirstName()).
+                        lastName(userCreate.getLastName())
+                        .role(role)
+                        .branchId(branch.getId().intValue())
+                        .password(passwordEncoder.encode(userCreate.getPassword()))
+                        .enabled(true)
+                        .authorities(Collections.emptyList())
+                        .build());
+                log.info("Staff successfully created");
+                return ResponseMessage.builder().message("Staff Signed Up Successfully").build();
+
+            }}
+
+        catch (Exception e){
+            log.info("error creating a Staff"+ e);
         }
 
         return null;

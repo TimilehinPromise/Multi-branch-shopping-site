@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import java.util.Set;
 
 @Setter
 @Getter
@@ -15,11 +14,12 @@ import java.util.Set;
 @AllArgsConstructor
 public class UserCreate {
     @NotEmpty
-    private String firstname;
+    private String firstName;
     @NotEmpty
-    private String lastname;
+    private String lastName;
     private String password;
     private String branchId;
+    private RoleType role;
     @NotEmpty
     @Email
     private String email;

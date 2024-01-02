@@ -37,7 +37,7 @@ public class TokenAuthenticationService {
     }
 
     public TokenStore generatorToken(User user) {
-        final String token = jwtGenerator.generateToken(user);
+        final String token = jwtGenerator.generateToken( user);
          return tokenStoreRepository.save(new TokenStore(token, getExpiryDate()));
     }
 

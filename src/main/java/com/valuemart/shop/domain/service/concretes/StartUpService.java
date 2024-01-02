@@ -37,15 +37,15 @@ public class StartUpService {
     private final LoyaltyRepository loyaltyRepository;
 
 
-    private static final String DEFAULT_ADMIN_EMAIL = "valuemart@gmail.com";
+    private static final String DEFAULT_ADMIN_EMAIL = "valuemartstaff@gmail.com";
 
 
     public CompletableFuture<Void> loadDefaultData() {
         return runAsync(() -> {
-            Optional<Role> role = roleRepository.findByName("ADMIN");
+            Optional<Role> role = roleRepository.findByName("STAFF");
             Role savedRole;
             if (role.isEmpty()) {
-                savedRole = roleRepository.save(new Role("ADMIN"));
+                savedRole = roleRepository.save(new Role("STAFF"));
             } else {
                 savedRole = role.get();
             }
@@ -110,7 +110,7 @@ public class StartUpService {
                 log.info("creating default admin user");
                 User admin = User.builder()
                         .firstName("Timmy")
-                        .lastName("Admin")
+                        .lastName("Staff")
                         .emailVerified(true)
                         .deleted(false)
                         .enabled(true)
