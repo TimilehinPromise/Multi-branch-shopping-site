@@ -26,6 +26,12 @@ public class EmailServiceImpl implements EmailService {
     public static final String PIN_SUBJECT = "Value Plus Reset Pin";
     public static final String VERIFY_EMAIL_SUBJECT = "Value Mart Verify Email";
 
+    public static final String USER_CREATION_SUBJECT = "Value Mart Account Created";
+
+    public static final String LOGIN_URL = "localhost:9010/v1/api/auth/login";
+
+    public static final String PIN_UPDATE = "Value Mart Pin Update";
+
     private final VelocityEngine velocityEngine;
     public static final String PRODUCT_ORDER_CREATION_SUBJECT = "Value Plus Product Order Creation Notification";
 
@@ -88,45 +94,33 @@ public class EmailServiceImpl implements EmailService {
 
         emailClient.sendSimpleMessage(user.getEmail(), VERIFY_EMAIL_SUBJECT, stringWriter.toString());
     }
+//
+//    @Override
+//    public void sendAdminUserCreationEmail(User user, String password) throws Exception {
+//        Template template = velocityEngine.getTemplate("/templates/v2/admincreation.vm");
+//        VelocityContext context = new VelocityContext();
+//        context.put("username", user.getEmail());
+//        context.put("name", user.getFirstName() + " " + user.getLastName());
+//        context.put("password", password);
+//        StringWriter stringWriter = new StringWriter();
+//        template.merge(context, stringWriter);
+//
+//        emailClient.sendSimpleMessage(user.getEmail(), USER_CREATION_SUBJECT, stringWriter.toString());
+//    }
+//
+//    @Override
+//    public void sendSubAdminUserCreationEmail(User user, String password) throws Exception {
+//        Template template = velocityEngine.getTemplate("/templates/v2/subadmincreation.vm");
+//        VelocityContext context = new VelocityContext();
+//        context.put("username", user.getEmail());
+//        context.put("name", user.getFirstName() + " " + user.getLastName());
+//        context.put("password", password);
+//        StringWriter stringWriter = new StringWriter();
+//        template.merge(context, stringWriter);
+//
+//        emailClient.sendSimpleMessage(user.getEmail(), USER_CREATION_SUBJECT, stringWriter.toString());
+//    }
 
-    @Override
-    public void sendAdminUserCreationEmail(User user, String password) throws Exception {
-        Template template = velocityEngine.getTemplate("/templates/v2/admincreation.vm");
-        VelocityContext context = new VelocityContext();
-        context.put("username", user.getEmail());
-        context.put("name", user.getFirstName() + " " + user.getLastName());
-        context.put("password", password);
-        StringWriter stringWriter = new StringWriter();
-        template.merge(context, stringWriter);
 
-        emailClient.sendSimpleMessage(user.getEmail(), USER_CREATION_SUBJECT, stringWriter.toString());
-    }
-
-    @Override
-    public void sendSubAdminUserCreationEmail(User user, String password) throws Exception {
-        Template template = velocityEngine.getTemplate("/templates/v2/subadmincreation.vm");
-        VelocityContext context = new VelocityContext();
-        context.put("username", user.getEmail());
-        context.put("name", user.getFirstName() + " " + user.getLastName());
-        context.put("password", password);
-        StringWriter stringWriter = new StringWriter();
-        template.merge(context, stringWriter);
-
-        emailClient.sendSimpleMessage(user.getEmail(), USER_CREATION_SUBJECT, stringWriter.toString());
-    }
-
-    @Override
-    public void sendSuperAgentUserCreationEmail(User user, String password) throws Exception {
-        Template template = velocityEngine.getTemplate("/templates/v2/superagentcreate.vm");
-        VelocityContext context = new VelocityContext();
-        context.put("username", user.getEmail());
-        context.put("name", user.getFirstName() + " " + user.getLastName());
-        context.put("password", password);
-        context.put("loginurl",LOGIN_URL);
-        StringWriter stringWriter = new StringWriter();
-        template.merge(context, stringWriter);
-
-        emailClient.sendSimpleMessage(user.getEmail(), USER_SUPER_AGENT_CREATION_SUBJECT, stringWriter.toString());
-    }
 
 }
