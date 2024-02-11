@@ -5,7 +5,6 @@ import com.valuemart.shop.domain.ResponseMessage;
 import com.valuemart.shop.domain.models.ProductModel;
 import com.valuemart.shop.domain.models.dto.ProductDTO;
 import com.valuemart.shop.domain.service.abstracts.ProductsService;
-import com.valuemart.shop.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -44,40 +43,39 @@ public class ProductAdminController {
 
     @PostMapping("/bulk")
     public List<String>  createProductWithCsv(@RequestParam("file")MultipartFile file) {
-
-        return productsService.processExcelFileToDeviceGroup(file);
+        return productsService.processExcelFileToProducts(file);
     }
 
-    @GetMapping("/category/{categoryId}")
-    public Page<ProductModel> getAllProductByCategory(@PageableDefault(sort = "id", direction = DESC) Pageable pageable, @PathVariable Long categoryId) {
-        return productsService.getAllProductByCategory(categoryId,pageable);
-    }
-
-    @GetMapping("")
-    public Page<ProductModel> getAllProduct(@PageableDefault(sort = "id", direction = DESC) Pageable pageable) {
-        return productsService.getAllProduct(pageable);
-    }
-
-    @GetMapping("/subcategory/{subcategoryId}")
-    public Page<ProductModel> getAllProductBySubCategory(@PageableDefault(sort = "id", direction = DESC) Pageable pageable,@PathVariable Long subcategoryId) {
-        return productsService.getAllProductBySubCategory(subcategoryId,pageable);
-    }
-
-    @GetMapping("/{sku}")
-    public ProductModel getAllProductBySku(@PathVariable String sku) {
-        return productsService.getProductBySkuId(sku);
-    }
-
-
-    @GetMapping("/relatedBy/{sku}")
-    public List<ProductModel> getAllProductRelatedBy(@RequestParam String related, @RequestParam String keyword, @PathVariable String sku ) {
-        return productsService.getProductRelatedBy(related,keyword,sku);
-    }
-
-
-    @GetMapping("/search")
-    public Page<ProductModel> search(@RequestParam Long branchId, @RequestParam String keyword,@PageableDefault(sort = "id", direction = DESC) Pageable pageable) {
-        return productsService.searchProducts(keyword,branchId,pageable);
-    }
+//    @GetMapping("/category/{categoryId}")
+//    public Page<ProductModel> getAllProductByCategory(@PageableDefault(sort = "id", direction = DESC) Pageable pageable, @PathVariable Long categoryId) {
+//        return productsService.getAllProductByCategory(categoryId,pageable);
+//    }
+//
+//    @GetMapping("")
+//    public Page<ProductModel> getAllProduct(@PageableDefault(sort = "id", direction = DESC) Pageable pageable) {
+//        return productsService.getAllProduct(pageable);
+//    }
+//
+//    @GetMapping("/subcategory/{subcategoryId}")
+//    public Page<ProductModel> getAllProductBySubCategory(@PageableDefault(sort = "id", direction = DESC) Pageable pageable,@PathVariable Long subcategoryId) {
+//        return productsService.getAllProductBySubCategory(subcategoryId,pageable);
+//    }
+//
+//    @GetMapping("/{sku}")
+//    public ProductModel getAllProductBySku(@PathVariable String sku) {
+//        return productsService.getProductBySkuId(sku);
+//    }
+//
+//
+//    @GetMapping("/relatedBy/{sku}")
+//    public List<ProductModel> getAllProductRelatedBy(@RequestParam String related, @RequestParam String keyword, @PathVariable String sku ) {
+//        return productsService.getProductRelatedBy(related,keyword,sku);
+//    }
+//
+//
+//    @GetMapping("/search")
+//    public Page<ProductModel> search(@RequestParam Long branchId, @RequestParam String keyword,@PageableDefault(sort = "id", direction = DESC) Pageable pageable) {
+//        return productsService.searchProducts(keyword,branchId,pageable);
+//    }
 
 }

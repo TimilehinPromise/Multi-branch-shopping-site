@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Locale;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import java.util.Random;
 
 
@@ -27,10 +28,29 @@ public final class UserUtils {
         return ((User) authentication.getPrincipal());
     }
 
+    public static Optional<User> getLoggedInUserOptional() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            return Optional.empty();
+        }
+
+        Object principal = authentication.getPrincipal();
+
+        // Ensure the principal is actually an instance of your User class before casting
+        if (principal instanceof User) {
+            return Optional.of((User) principal);
+        } else {
+            // Handle other principal types (e.g., String) or custom user details class if necessary
+            return Optional.empty();
+        }
+    }
 
 
 
-        public static String generateCustomerCode(String customerName, Long customerId, LocalDateTime signupDate) {
+
+
+    public static String generateCustomerCode(String customerName, Long customerId, LocalDateTime signupDate) {
             // Format the date to get the full month name
             DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMMM", Locale.ENGLISH);
             String fullMonthName = signupDate.format(monthFormatter);

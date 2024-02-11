@@ -8,11 +8,13 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 import java.io.StringWriter;
+import java.time.LocalDateTime;
 
 @Slf4j
 @Service
@@ -26,7 +28,9 @@ public class EmailServiceImpl implements EmailService {
     public static final String PIN_SUBJECT = "Value Plus Reset Pin";
     public static final String VERIFY_EMAIL_SUBJECT = "Value Mart Verify Email";
 
-    public static final String USER_CREATION_SUBJECT = "Value Mart Account Created";
+
+
+    public static final String USER_CREATION_SUBJECT = "Welcome to ValueMart - Your Shopping Adventure Begins!";
 
     public static final String LOGIN_URL = "localhost:9010/v1/api/auth/login";
 
@@ -37,8 +41,23 @@ public class EmailServiceImpl implements EmailService {
 
 
     @Override
+    @Async
+    public void sendCustomerCreationEmail(User user) throws Exception {
+        Template template = velocityEngine.getTemplate("/templates/customercreate.vm");
+        VelocityContext context = new VelocityContext();
+        context.put("CustomerName", user.getFirstName());
+        context.put("loginurl",LOGIN_URL);
+        context.put("MallName","ValueMart");
+        context.put("Year", LocalDateTime.now().getYear());
+        StringWriter stringWriter = new StringWriter();
+        template.merge(context, stringWriter);
+
+        emailClient.sendSimpleMessage(user.getEmail(), USER_CREATION_SUBJECT, stringWriter.toString());
+    }
+
+    @Override
     public void sendPasswordReset(User user, String link)  {
-        Template template = velocityEngine.getTemplate("/templates/v2/passwordreset.vm");
+        Template template = velocityEngine.getTemplate("/templates/passwordreset.vm");
         VelocityContext context = new VelocityContext();
         context.put("name", user.getFirstName() + " " + user.getLastName());
         context.put("link", link);

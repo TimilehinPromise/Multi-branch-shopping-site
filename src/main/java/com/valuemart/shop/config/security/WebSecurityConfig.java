@@ -70,6 +70,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
+                .antMatchers("/v1/api/admin/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_STAFF")
                 .antMatchers("/v1/auth/**",
                         "/swagger**",
                         "/swagger-resources/**",
@@ -84,6 +85,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/v1/register",
                         "/v1/api/auth/**").permitAll()
                 .anyRequest().authenticated()
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(new DefaultAuthenticationEntryPoint())
+                .accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }

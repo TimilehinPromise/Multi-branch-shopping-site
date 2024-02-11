@@ -4,8 +4,10 @@ package com.valuemart.shop.domain.models;
 import com.valuemart.shop.persistence.entity.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class UserAuthentication implements Authentication {
 
@@ -22,12 +24,13 @@ public class UserAuthentication implements Authentication {
             return user.getEmail();
         }
 
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-            return user.getAuthorities();
-        }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return user.getAuthorities();
+    }
 
-        @Override
+
+    @Override
         public Object getCredentials() {
             return null;
         }
@@ -51,4 +54,8 @@ public class UserAuthentication implements Authentication {
         public void setAuthenticated(boolean authenticated) {
             this.authenticated = authenticated;
         }
+
+    public User getUser() {
+        return user;
+    }
 }

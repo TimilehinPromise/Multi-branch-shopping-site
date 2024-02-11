@@ -28,6 +28,7 @@ CREATE TABLE users (
                        phone VARCHAR(255),
                        email_verified BOOLEAN DEFAULT FALSE,
                        retries INT DEFAULT 0,
+                       provider VARCHAR(255),
                        role_id BIGINT,
                        enabled BOOLEAN DEFAULT FALSE,
                        deleted BOOLEAN DEFAULT FALSE,
@@ -50,7 +51,7 @@ CREATE TABLE user_authority (
 
 
 -- Additional scripts to populate roles and authorities if needed
-INSERT INTO role (name) VALUES ('CUSTOMER'), ('STAFF'), ('SUPER-ADMIN');
+INSERT INTO role (name) VALUES ('ROLE_CUSTOMER'), ('ROLE_STAFF'), ('ROLE_ADMIN');
 -- INSERT INTO authorities (authority) VALUES ('READ_PRIVILEGE'), ('WRITE_PRIVILEGE');
 
 CREATE TABLE token_store (
@@ -115,6 +116,7 @@ CREATE TABLE product (
                          enabled BOOLEAN NOT NULL,
                          sub_category_id BIGINT,
                          category_id BIGINT,
+                         season VARCHAR(255),
                          created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                          updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                          FOREIGN KEY (sub_category_id) REFERENCES business_subcategory (id),
@@ -208,7 +210,33 @@ CREATE TABLE payment (
                          updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                          PRIMARY KEY (reference_id, user_id)
 );
+CREATE TABLE recently_viewed (
+                                 id SERIAL PRIMARY KEY,
+                                 user_id BIGINT NOT NULL,
+                                 product_id BIGINT NOT NULL,
+                                 view_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+                                 CONSTRAINT fk_user
+                                     FOREIGN KEY(user_id)
+                                         REFERENCES users(id),
+                                 CONSTRAINT fk_product
+                                     FOREIGN KEY(product_id)
+                                         REFERENCES product(id)
+);
 
+CREATE INDEX idx_recently_viewed_user_id ON recently_viewed (user_id);
+CREATE INDEX idx_recently_viewed_view_timestamp ON recently_viewed (view_timestamp DESC);
+
+
+CREATE TABLE password_reset_token (
+                                      user_id BIGINT PRIMARY KEY,
+                                      reset_token VARCHAR(255) NOT NULL,
+                                      created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                                      updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+ALTER TABLE password_reset_token
+    ADD CONSTRAINT fk_password_reset_token_user_id
+        FOREIGN KEY (user_id) REFERENCES users(id);
 
 
 

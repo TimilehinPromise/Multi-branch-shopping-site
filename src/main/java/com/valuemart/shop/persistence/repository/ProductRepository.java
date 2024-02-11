@@ -32,6 +32,8 @@ public interface ProductRepository extends JpaRepository<Product,Long>, JpaSpeci
 
     List<Product> findAllByBrandAndDeletedFalseAndSkuIdNot(String brand,String skuId);
 
+    List<Product> findAllBySeasonAndDeletedFalse(String season);
+
     List<Product> findAllByBusinessSubcategoryIdAndDeletedFalseAndSkuIdNot(Long subCategoryId,String skuId);
 
     Boolean existsProductByNameIgnoreCaseAndSkuIdNot(String name, String skuId);

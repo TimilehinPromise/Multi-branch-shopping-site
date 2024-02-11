@@ -2,6 +2,7 @@ package com.valuemart.shop.domain.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.valuemart.shop.domain.ProductImageModel;
+import com.valuemart.shop.domain.models.Seasons;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,5 +40,6 @@ public class ProductDTO {
     private boolean availableInBranch2;
     private boolean availableInBranch3;
     private String skuId;
+    private Seasons season;
 
 }

@@ -44,6 +44,8 @@ public class User extends BasePersistentEntity implements UserDetails, ToModel {
     private String phone;
     private boolean emailVerified;
 
+    private String provider;
+
     @Column(columnDefinition = " int default '0'")
     private int retries =0;
 
@@ -70,7 +72,9 @@ public class User extends BasePersistentEntity implements UserDetails, ToModel {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = EAGER)
     private Wallet wallet;
 
-
+    public <T> User(String testUser, String testPassword, List<T> ts) {
+        super();
+    }
 
 
 
@@ -79,7 +83,7 @@ public class User extends BasePersistentEntity implements UserDetails, ToModel {
         List<GrantedAuthority> authorities = new ArrayList<>();
         Role role = getRole();
         if (role != null) {
-            String roleName = "ROLE_" + role.getName();
+            String roleName = role.getName();
             authorities.add(new SimpleGrantedAuthority(roleName));
         }
 

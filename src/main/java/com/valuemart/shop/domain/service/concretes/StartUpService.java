@@ -42,15 +42,15 @@ public class StartUpService {
 
     public CompletableFuture<Void> loadDefaultData() {
         return runAsync(() -> {
-            Optional<Role> role = roleRepository.findByName("STAFF");
+            Optional<Role> role = roleRepository.findByName("ROLE_STAFF");
             Role savedRole;
             if (role.isEmpty()) {
-                savedRole = roleRepository.save(new Role("STAFF"));
+                savedRole = roleRepository.save(new Role("ROLE_STAFF"));
             } else {
                 savedRole = role.get();
             }
             if (userRepository.findAll().isEmpty()){
-                Role customerRole = roleRepository.findFirstByName("CUSTOMER");
+                Role customerRole = roleRepository.findFirstByName("ROLE_CUSTOMER");
                 User customer = User.builder()
                         .firstName("Timi")
                         .lastName("Promise")

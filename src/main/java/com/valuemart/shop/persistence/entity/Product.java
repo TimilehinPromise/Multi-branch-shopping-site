@@ -37,6 +37,7 @@ public class Product extends BasePersistentEntity implements ToModel {
     private boolean enabled;
     @Column(nullable = false)
     private String skuId;
+    private String season;
     @ManyToOne
     @JoinColumn(name = "sub_category_id")
     private BusinessSubcategory businessSubcategory;
@@ -81,8 +82,9 @@ public class Product extends BasePersistentEntity implements ToModel {
                 .subcategoryName(this.businessSubcategory != null ? this.businessSubcategory.getName() : null)
                 .price(this.price)
                 .createdAt(this.createdAt)
-//                .updatedAt(this.updatedAt)
+                .season(this.season)
                 .enabled(this.enabled)
+                .id(this.id)
                 .images(imageModels) // Adding the list of image models
                 .build();
     }
@@ -107,6 +109,7 @@ public class Product extends BasePersistentEntity implements ToModel {
                 .price(dto.getPrice())
                 .enabled(dto.isEnabled())
                 .deleted(false)
+                .season(dto.getSeason() != null ? dto.getSeason().name() : null)
                 .build();
     }
 

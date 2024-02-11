@@ -3,18 +3,17 @@ package com.valuemart.shop.domain.service.concretes;
 import com.valuemart.shop.domain.ProductImageModel;
 import com.valuemart.shop.domain.ResponseMessage;
 import com.valuemart.shop.domain.models.ProductModel;
+import com.valuemart.shop.domain.models.Seasons;
 import com.valuemart.shop.domain.models.dto.ProductDTO;
 import com.valuemart.shop.domain.models.enums.RelatedBy;
 import com.valuemart.shop.domain.service.abstracts.ProductsService;
 import com.valuemart.shop.domain.util.ProductUtil;
 import com.valuemart.shop.domain.util.ResponseMessageUtil;
+import com.valuemart.shop.domain.util.UserUtils;
 import com.valuemart.shop.exception.BadRequestException;
 import com.valuemart.shop.exception.NotFoundException;
 import com.valuemart.shop.persistence.entity.*;
-import com.valuemart.shop.persistence.repository.BranchRepository;
-import com.valuemart.shop.persistence.repository.BusinessCategoryRepository;
-import com.valuemart.shop.persistence.repository.BusinessSubCategoryRepository;
-import com.valuemart.shop.persistence.repository.ProductRepository;
+import com.valuemart.shop.persistence.repository.*;
 import com.valuemart.shop.persistence.specification.ProductSpecification;
 import com.valuemart.shop.persistence.specification.SearchCriteria;
 import com.valuemart.shop.persistence.specification.SearchOperation;
@@ -24,14 +23,17 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.InputStream;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.ValidationException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -51,6 +53,7 @@ public class ProductServiceImpl implements ProductsService {
     private final BusinessCategoryRepository businessCategoryRepository;
     private final BusinessSubCategoryRepository businessSubCategoryRepository;
     private final ProductRepository productRepository;
+    private final RecentlyViewedRepository recentlyViewedRepository;
 
     private static final String TYPE = "text/csv";
 
@@ -115,6 +118,9 @@ public class ProductServiceImpl implements ProductsService {
         if (existingProduct.isEnabled() != product.isEnabled()) {
             existingProduct.setEnabled(product.isEnabled());
         }
+        if (existingProduct.getSeason().equals(product.getSeason())){
+            existingProduct.setSeason(product.getSeason());
+        }
         if(existingProduct.getBusinessCategory().getId() != null && !existingProduct.getBusinessCategory().getId().equals(product.getBusinessCategory().getId()))
         {
             existingProduct.setBusinessCategory(product.getBusinessCategory());
@@ -173,9 +179,34 @@ public class ProductServiceImpl implements ProductsService {
 
     @Override
     public ProductModel getProductBySkuId(String skuId){
+        Optional<User> user = UserUtils.getLoggedInUserOptional();
 
-        return productRepository.findFirstBySkuIdAndDeletedFalse(skuId).map(Product::toModel)
+        ProductModel model = productRepository.findFirstBySkuIdAndDeletedFalse(skuId).map(Product::toModel)
                 .orElseThrow(() -> new NotFoundException("Product Not Found"));
+
+        if (user.isPresent()){
+            updateRecentlyViewed(user.get().getId(), model.getId());
+        }
+
+        return model;
+    }
+
+    @Async
+    public void updateRecentlyViewed(Long userId, Long productId){
+        // Logic to handle recently viewed items
+        RecentlyViewed recentlyViewed = recentlyViewedRepository.findByUserIdAndProductId(userId, productId);
+        if (recentlyViewed != null) {
+            recentlyViewed.setViewTimestamp(LocalDateTime.now());
+        } else {
+            if (recentlyViewedRepository.countByUserId(userId) >= 9) {
+                Pageable limit = PageRequest.of(0, 1);
+               List<RecentlyViewed> oldestViewed = recentlyViewedRepository.findOldestByUserId(userId,limit);
+                recentlyViewedRepository.delete(oldestViewed.get(0));
+            }
+            recentlyViewed = new RecentlyViewed(userId, productId, LocalDateTime.now());
+        }
+        recentlyViewedRepository.save(recentlyViewed);
+
     }
 
     @Override
@@ -196,6 +227,14 @@ public class ProductServiceImpl implements ProductsService {
 
         return products.stream().map(Product::toModel).collect(Collectors.toList());
     }
+
+    @Override
+    public List<ProductModel> getProductsBySeason(){
+        Seasons currentSeason = Seasons.getCurrentSeason();
+        System.out.println(currentSeason.name());
+      return  productRepository.findAllBySeasonAndDeletedFalse(currentSeason.name()).stream().map(Product::toModel).collect(Collectors.toList());
+    }
+
 
     @Override
     public Page<ProductModel> filterProducts(String skuId,
@@ -321,7 +360,7 @@ public class ProductServiceImpl implements ProductsService {
     }
 
     @Override
-    public List<String> processExcelFileToDeviceGroup(MultipartFile file) {
+    public List<String> processExcelFileToProducts(MultipartFile file) {
         List<String> errorLog = new ArrayList<>();
 
         try (InputStream inputStream = file.getInputStream();
@@ -459,16 +498,15 @@ public class ProductServiceImpl implements ProductsService {
                 return null; // Or handle it differently
             }
 
-            // For boolean cells, default to false if the cell is null or not boolean
             productDTO.setEnabled(getBooleanValue(row.getCell(4)));
             productDTO.setAvailableInBranch1(getBooleanValue(row.getCell(5)));
             productDTO.setAvailableInBranch2(getBooleanValue(row.getCell(6)));
             productDTO.setAvailableInBranch3(getBooleanValue(row.getCell(7)));
 
-            // ... remaining logic for categories and images ...
-
             String categoryName = formatter.formatCellValue(row.getCell(8));
+            System.out.println(categoryName);
             String subCategoryName = formatter.formatCellValue(row.getCell(9));
+            System.out.println(subCategoryName);
 
              categoryName = getFormattedCellValue(categoryName);
              subCategoryName = getFormattedCellValue(subCategoryName);
@@ -483,7 +521,7 @@ public class ProductServiceImpl implements ProductsService {
 
             // Handling images
             List<ProductImageModel> images = new ArrayList<>();
-            for (int i = 10; i < row.getLastCellNum(); i++) {
+            for (int i = 10; i < 12; i++) {
                 Cell imageCell = row.getCell(i, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                 String imageUrl = formatter.formatCellValue(imageCell);
                 if (!imageUrl.isEmpty()) {
@@ -491,6 +529,20 @@ public class ProductServiceImpl implements ProductsService {
                 }
             }
             productDTO.setImages(images);
+
+            String cellValue = formatter.formatCellValue(row.getCell(13)).toUpperCase().trim();
+
+            System.out.println(cellValue);
+
+            if (!cellValue.isEmpty()) {
+                try {
+                    productDTO.setSeason(Seasons.valueOf(cellValue));
+                } catch (IllegalArgumentException e) {
+                    productDTO.setSeason(null); // Setting to null if the value is invalid
+                }
+            } else {
+                productDTO.setSeason(null); // Set to null if the cell is empty
+            }
             log.info(productDTO.toString());
             return productDTO;
         } catch (Exception e) {

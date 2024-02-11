@@ -3,6 +3,8 @@ package com.valuemart.shop.domain.service.abstracts;
 import com.valuemart.shop.persistence.entity.User;
 
 public interface EmailService {
+    void sendCustomerCreationEmail(User user) throws Exception;
+
     void sendPasswordReset(User user, String link);
 
     void sendPinReset(User user, String link) throws Exception;

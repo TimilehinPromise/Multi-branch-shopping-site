@@ -1,73 +1,75 @@
 INSERT INTO business_category (name, is_deleted) VALUES
-                                                                 ('Electronics', FALSE),
-                                                                 ('Fashion', FALSE),
-                                                                 ('Home and Garden', FALSE),
-                                                                 ('Sports and Outdoors', FALSE),
-                                                                 ('Beauty and Personal Care', FALSE),
-                                                                 ('Toys and Games', FALSE),
-                                                                 ('Books and Stationery', FALSE),
-                                                                 ('Food and Grocery', FALSE);
+                                                     ('Autocare and Accessories', FALSE),
+                                                     ('Baby and Kids', FALSE),
+                                                     ('Food and Grocery', FALSE),
+                                                     ('Health and Beauty', FALSE),
+                                                     ('Home and Living', FALSE),
+                                                     ('Electronics and Gadgets', FALSE),
+                                                     ('Fashion', FALSE),
+                                                     ('Stationery and Books', FALSE),
+                                                     ('Food and Spirits', FALSE);
 
 
--- For 'Electronics' Category
+-- Autocare & Accessories Subcategories (assuming category_id = 1)
 INSERT INTO business_subcategory (name, category_id, is_deleted) VALUES
-                                                                     ('Mobile Phones', 1, FALSE),
-                                                                     ('Laptops and Computers', 1, FALSE),
-                                                                     ('Cameras and Photography', 1, FALSE),
-                                                                     ('Audio and Headphones', 1, FALSE),
-                                                                     ('Wearable Technology', 1, FALSE);
+                                                                     ('Car Accessories', 1, FALSE),
+                                                                     ('Car Maintenance', 1, FALSE);
 
+-- Baby & Kids Subcategories (assuming category_id = 2)
 INSERT INTO business_subcategory (name, category_id, is_deleted) VALUES
-                                                                     ('Women Clothing', 2, FALSE),
-                                                                      ('Men Clothing', 2, FALSE);
+                                                                     ('Baby Care', 2, FALSE),
+                                                                     ('Feeding and Nursing', 2, FALSE),
+                                                                     ('Toys and Games', 2, FALSE),
+                                                                     ('Kids Clothing', 2, FALSE);
 
--- For 'Home and Garden' Category (category_id = 3)
+-- Food & Grocery Subcategories (assuming category_id = 3)
 INSERT INTO business_subcategory (name, category_id, is_deleted) VALUES
-                                                                     ('Furniture', 3, FALSE),
-                                                                     ('Home Decor', 3, FALSE),
-                                                                     ('Kitchenware', 3, FALSE),
-                                                                     ('Gardening Tools', 3, FALSE),
-                                                                     ('Home Appliances', 3, FALSE);
+                                                                     ('Bakery and Bread', 3, FALSE),
+                                                                     ('Beverages', 3, FALSE),
+                                                                     ('Dairy and Eggs', 3, FALSE),
+                                                                     ('Meat and Seafood', 3, FALSE),
+                                                                     ('Fruits and Vegetables', 3, FALSE);
 
--- For 'Sports and Outdoors' Category (category_id = 4)
-INSERT INTO business_subcategory (name, category_id, is_deleted) VALUES
-                                                                     ('Fitness Equipment', 4, FALSE),
-                                                                     ('Camping and Hiking', 4, FALSE),
-                                                                     ('Cycling', 4, FALSE),
-                                                                     ('Water Sports', 4, FALSE),
-                                                                     ('Team Sports Gear', 4, FALSE);
 
--- For 'Beauty and Personal Care' Category (category_id = 5)
+-- Health & Beauty Subcategories (assuming category_id = 4)
 INSERT INTO business_subcategory (name, category_id, is_deleted) VALUES
-                                                                     ('Skincare Products', 5, FALSE),
-                                                                     ('Haircare Products', 5, FALSE),
-                                                                     ('Makeup and Cosmetics', 5, FALSE),
-                                                                     ('Fragrances', 5, FALSE),
-                                                                     ('Mens Grooming', 5, FALSE);
+                                                                     ('Health Supplements', 4, FALSE),
+                                                                     ('Beauty and Cosmetics', 4, FALSE);
 
--- For 'Toys and Games' Category (category_id = 6)
-INSERT INTO business_subcategory (name, category_id, is_deleted) VALUES
-                                                                    ('Educational Toys', 6, FALSE),
-                                                                    ('Board Games and Puzzles', 6, FALSE),
-                                                                    ('Dolls and Action Figures', 6, FALSE),
-                                                                    ('Outdoor Play', 6, FALSE),
-                                                                    ('Video Games', 6, FALSE);
 
--- For 'Books and Stationery' Category (category_id = 7)
+-- Home & Living Subcategories (assuming category_id = 5)
 INSERT INTO business_subcategory (name, category_id, is_deleted) VALUES
-                                                                    ('Fiction Books', 7, FALSE),
-                                                                    ('Non-Fiction Books', 7, FALSE),
-                                                                    ('Children’s Books', 7, FALSE),
-                                                                    ('Office Supplies', 7, FALSE),
-                                                                    ('Art and Craft Supplies', 7, FALSE);
+    ('Kitchen and Dining', 5, FALSE),
+    ('Home Decor', 5, FALSE),
+    ('Cleaning Supplies', 5, FALSE),
+    ('Furniture and Lighting', 5, FALSE);
 
--- For 'Food and Grocery' Category (category_id = 8)
+-- Electronics & Gadgets Subcategories (assuming category_id = 6)
 INSERT INTO business_subcategory (name, category_id, is_deleted) VALUES
-                                                                    ('Fresh Produce', 8, FALSE),
-                                                                    ('Dairy and Eggs', 8, FALSE),
-                                                                    ('Snacks and Beverages', 8, FALSE),
-                                                                    ('Baking and Cooking Ingredients', 8, FALSE),
-                                                                    ('Health and Organic Foods', 8, FALSE);
+    ('Mobile Phones and Accessories', 6, FALSE),
+    ('Computers and Tablets', 6, FALSE),
+    ('Audio and Video', 6, FALSE),
+    ('Photography and Drones', 6, FALSE);
+
+-- Fashion Subcategories (assuming category_id = 7)
+INSERT INTO business_subcategory (name, category_id, is_deleted) VALUES
+    ('Women Fashion', 7, FALSE),
+    ('Men Fashion', 7, FALSE),
+    ('Jewelry and Watches', 7, FALSE),
+    ('Bags and Wallets', 7, FALSE);
+
+-- Stationery & Books Subcategories (assuming category_id = 8)
+INSERT INTO business_subcategory (name, category_id, is_deleted) VALUES
+    ('Office Supplies', 8, FALSE),
+    ('Art Supplies', 8, FALSE),
+    ('Books', 8, FALSE);
+
+-- Food & Spirits Subcategories (assuming category_id = 9)
+INSERT INTO business_subcategory (name, category_id, is_deleted) VALUES
+    ('Wines and Spirits', 9, FALSE),
+    ('Non-Alcoholic Beverages', 9, FALSE),
+    ('Snacks and Confectionery', 9, FALSE);
+
 
 INSERT INTO branch (name, location) VALUES
                                         ('ValueMart Store', 'Maitama'),

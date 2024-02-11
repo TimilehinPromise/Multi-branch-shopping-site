@@ -56,6 +56,11 @@ public class ProductCustomerController {
         return productsService.getProductRelatedBy(related,keyword,sku);
     }
 
+    @GetMapping("/season")
+    public List<ProductModel> getAllProductBySeason() {
+        return productsService.getProductsBySeason();
+    }
+
 
     @GetMapping("/search")
     public Page<ProductModel> search(@RequestParam Long branchId, @RequestParam String keyword,@PageableDefault(sort = "id", direction = DESC) Pageable pageable) {

@@ -24,6 +24,8 @@ public interface ProductsService {
 
     List<ProductModel> getProductRelatedBy(String related, String keyword,String sku);
 
+    List<ProductModel> getProductsBySeason();
+
     Page<ProductModel> filterProducts(String skuId,
                                       Long productName,
                                       String branch,
@@ -33,6 +35,6 @@ public interface ProductsService {
                                       Long branchId,
                                       Pageable pageable);
 
-    List<String> processExcelFileToDeviceGroup(MultipartFile file);
+    List<String> processExcelFileToProducts(MultipartFile file);
 
 }

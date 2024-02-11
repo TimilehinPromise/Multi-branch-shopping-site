@@ -6,6 +6,7 @@ import com.valuemart.shop.domain.models.LoginResponseModel;
 import com.valuemart.shop.domain.models.RoleType;
 import com.valuemart.shop.domain.models.UserCreate;
 import com.valuemart.shop.domain.service.abstracts.AuthenticationService;
+import com.valuemart.shop.domain.service.abstracts.EmailService;
 import com.valuemart.shop.domain.util.UserUtils;
 import com.valuemart.shop.exception.BadRequestException;
 import com.valuemart.shop.exception.ValueMartRuntimeException;
@@ -26,8 +27,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
 
-import static com.valuemart.shop.domain.models.RoleType.ADMIN;
-import static com.valuemart.shop.domain.models.RoleType.STAFF;
+import static com.valuemart.shop.domain.models.RoleType.*;
 
 
 @Slf4j
@@ -47,6 +47,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
 
     private final TokenAuthenticationService tokenService;
+
+    private final EmailService emailService;
 
     @Override
     public LoginResponseModel login(CustomerLoginDTO loginForm) {
@@ -72,11 +74,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public ResponseMessage signUp(UserCreate userCreate){
-        if (userCreate.getRole().name().equals("ADMIN")){
+        if (userCreate.getRole().name().equals("ROLE_ADMIN")){
             return createAdmin(userCreate);
-        } else if (userCreate.getRole().name().equals("STAFF")) {
+        } else if (userCreate.getRole().name().equals("ROLE_STAFF")) {
             return createStaff(userCreate);
-        } else if (userCreate.getRole().name().equals("CUSTOMER")) {
+        } else if (userCreate.getRole().name().equals("ROLE_CUSTOMER")) {
             return createCustomer(userCreate);
         }
         else throw new BadRequestException("User role not Found");
@@ -86,7 +88,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public ResponseMessage createCustomer(UserCreate userCreate){
         try {
 
-            Role role = roleRepository.findFirstByName(RoleType.CUSTOMER.name());
+            Role role = roleRepository.findFirstByName(RoleType.ROLE_CUSTOMER.name());
             if (!userRepository.existsUserByEmail(userCreate.getEmail())){
           User savedCustomer =   userRepository.save(User.builder().
                     email(userCreate.getEmail()).
@@ -103,6 +105,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 String customerRoyaltyCode = UserUtils.generateCustomerCode(savedCustomer.getFirstName().concat(" ").concat(savedCustomer.getLastName()),savedCustomer.getId(), LocalDateTime.now());
                 savedCustomer.setRoyaltyCode(customerRoyaltyCode);
                 userRepository.save(savedCustomer);
+
+                emailService.sendCustomerCreationEmail(savedCustomer);
             log.info("Customer successfully created");
         return ResponseMessage.builder().message("Customer Signed Up Successfully").build();
 
@@ -119,7 +123,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public ResponseMessage createAdmin(UserCreate userCreate){
         try {
 
-            Role role = roleRepository.findFirstByName(ADMIN.name());
+            Role role = roleRepository.findFirstByName(ROLE_ADMIN.name());
             if (!userRepository.existsUserByEmail(userCreate.getEmail())){
                 userRepository.save(User.builder().
                         enabled(true).
@@ -147,7 +151,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public ResponseMessage createStaff(UserCreate userCreate){
         try {
 
-            Role role = roleRepository.findFirstByName(STAFF.name());
+            Role role = roleRepository.findFirstByName(ROLE_STAFF.name());
             Branch branch = branchRepository.findById(Long.valueOf(userCreate.getBranchId())).orElseThrow();
             if (!userRepository.existsUserByEmail(userCreate.getEmail())){
                 userRepository.save(User.builder().
@@ -226,6 +230,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public static boolean isAdmin(User user) {
-        return ADMIN.name().equals(user.getRole().getName());
+        return ROLE_ADMIN.name().equals(user.getRole().getName());
     }
 }

@@ -3,10 +3,13 @@ package com.valuemart.shop.config.security;
 
 import com.valuemart.shop.domain.models.UserAuthentication;
 import com.valuemart.shop.domain.service.concretes.TokenAuthenticationService;
+
+import com.valuemart.shop.persistence.entity.User;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -15,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
@@ -55,6 +59,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                         authentication.get().getAuthorities());
 
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
             }
 
             chain.doFilter(httpServletRequest, httpServletResponse);

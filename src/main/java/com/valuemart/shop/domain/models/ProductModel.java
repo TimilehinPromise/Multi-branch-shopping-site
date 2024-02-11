@@ -38,8 +38,9 @@ public class ProductModel {
     @Min(1)
     private BigDecimal price;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     private boolean enabled;
+    private String season;
+    private Long id;
 
 
 }

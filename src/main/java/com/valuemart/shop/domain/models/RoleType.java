@@ -1,5 +1,5 @@
 package com.valuemart.shop.domain.models;
 
 public enum RoleType {
-    CUSTOMER,  STAFF, ADMIN
+    ROLE_CUSTOMER,  ROLE_STAFF, ROLE_ADMIN
 }

@@ -1,20 +1,30 @@
 package com.valuemart.shop.domain.service.concretes;
 
 import com.valuemart.shop.domain.ResponseMessage;
+import com.valuemart.shop.domain.models.NewPassword;
+import com.valuemart.shop.domain.models.PasswordChange;
 import com.valuemart.shop.domain.models.dto.AddressDTO;
 import com.valuemart.shop.domain.models.AddressModel;
 import com.valuemart.shop.domain.models.UserUpdate;
+import com.valuemart.shop.domain.service.abstracts.EmailService;
 import com.valuemart.shop.domain.service.abstracts.UserService;
+import com.valuemart.shop.domain.util.GeneratorUtils;
+import com.valuemart.shop.domain.util.MapperUtil;
 import com.valuemart.shop.exception.BadRequestException;
 import com.valuemart.shop.exception.NotFoundException;
 import com.valuemart.shop.persistence.entity.Address;
+import com.valuemart.shop.persistence.entity.PasswordResetToken;
 import com.valuemart.shop.persistence.entity.User;
 import com.valuemart.shop.persistence.repository.AddressRepository;
+import com.valuemart.shop.persistence.repository.PasswordResetTokenRepository;
 import com.valuemart.shop.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +36,13 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final AddressRepository addressRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final EmailService emailService;
+
+    @Value("${app.user.reset-password}")
+    String userPasswordResetLink;
 
     @Override
     public ResponseMessage updateProfile(UserUpdate userUpdate){
@@ -58,6 +74,17 @@ public class UserServiceImpl implements UserService {
     public User getUser(Long userId){
        return userRepository.findById(userId).orElseThrow();
     }
+
+    @Override
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public Optional<User> getUserByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
+
 
     @Override
     public ResponseMessage addAddress(AddressDTO address, User user){
@@ -108,6 +135,68 @@ public class UserServiceImpl implements UserService {
 
        return addressRepository.findAllByUserId(userId,pageable).map(Address::toModel);
     }
+
+    @Override
+    public void sendResetPassword(String email){
+        User user = userRepository.findByEmailAndDeletedFalse(email)
+                .orElseThrow(() -> new NotFoundException("Invalid Credentials"));
+
+        String token = GeneratorUtils.generateRandomString(16);
+
+        PasswordResetToken resetToken = new PasswordResetToken(user.getId(), token);
+        passwordResetTokenRepository.save(resetToken);
+
+        emailService.sendPasswordReset(user, userPasswordResetLink.concat(token));
+    }
+
+    @Override
+    public User resetPassword(NewPassword newPassword)  {
+        Optional<PasswordResetToken> resetToken = passwordResetTokenRepository.findByResetToken(newPassword.getResetToken());
+        if (resetToken.isEmpty()) {
+            throw new BadRequestException("expired link");
+        }
+
+        Long userId = resetToken.get().getUserId();
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new BadRequestException("expired link");
+        }
+        String hashedPassword = passwordEncoder.encode(newPassword.getNewPassword());
+        User user = userOptional.get();
+        var oldObject = MapperUtil.copy(user, User.class);
+        user.setPassword(hashedPassword);
+        if (user.getRetries()>=5 && !user.isEnabled()){
+            user.setEnabled(true);
+            user.setRetries(0);
+            userRepository.save(user);
+        }
+        userRepository.save(user);
+        passwordResetTokenRepository.deleteById(userId);
+
+       // auditEvent.publish(oldObject, user, USER_PASSWORD_RESET, USER);
+        return user;
+    }
+
+    @Override
+    public User changePassword(Long userId, PasswordChange passwordChange) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("user not found"));
+        if (!passwordEncoder.matches(passwordChange.getOldPassword(), user.getPassword())) {
+            throw new BadCredentialsException("wrong password");
+        }
+
+        var oldObject = MapperUtil.copy(user, User.class);
+
+        String hashedPassword = passwordEncoder.encode(passwordChange.getNewPassword());
+        user.setPassword(hashedPassword);
+
+        var savedEntity = userRepository.save(user);
+
+      //  auditEvent.publish(oldObject, savedEntity, USER_PASSWORD_UPDATE, USER);
+        return savedEntity;
+    }
+
+
 
 
 }
