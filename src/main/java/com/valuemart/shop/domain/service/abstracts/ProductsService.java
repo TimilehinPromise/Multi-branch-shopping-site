@@ -3,6 +3,7 @@ package com.valuemart.shop.domain.service.abstracts;
 import com.valuemart.shop.domain.ResponseMessage;
 import com.valuemart.shop.domain.models.ProductModel;
 import com.valuemart.shop.domain.models.dto.ProductDTO;
+import com.valuemart.shop.persistence.entity.BusinessCategory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +23,9 @@ public interface ProductsService {
 
     ProductModel getProductBySkuId(String skuId);
 
-    List<ProductModel> getProductRelatedBy(String related, String keyword,String sku);
+    List<BusinessCategory> getCategories();
+
+    List<ProductModel> getProductRelatedBy(String related, String keyword, String sku);
 
     List<ProductModel> getProductsBySeason();
 

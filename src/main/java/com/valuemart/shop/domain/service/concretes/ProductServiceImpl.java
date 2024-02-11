@@ -210,6 +210,11 @@ public class ProductServiceImpl implements ProductsService {
     }
 
     @Override
+    public List<BusinessCategory> getCategories(){
+        return businessCategoryRepository.findAllByDeletedFalse();
+    }
+
+    @Override
     public List<ProductModel> getProductRelatedBy(String related, String keyword,String productSku) {
 
         productRepository.findFirstBySkuIdAndDeletedFalse(productSku).map(Product::toModel)

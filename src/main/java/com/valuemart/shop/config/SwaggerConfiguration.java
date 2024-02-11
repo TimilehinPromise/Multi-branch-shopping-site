@@ -36,7 +36,7 @@ public class SwaggerConfiguration {
     private ApiInfo appInfo() {
         return new ApiInfoBuilder().title("REST API")
                 .description("The rest api demo for shop").termsOfServiceUrl("")
-                .contact(new Contact("ValuePlus", "https://shopvaluemart.com", "valuemart@gmail.com"))
+                .contact(new Contact("ValueMart", "https://shopvaluemart.ng", "valuemart@gmail.com"))
                 .license("Apache License Version 2.0")
                 .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0")
                 .version("0.0.1")
