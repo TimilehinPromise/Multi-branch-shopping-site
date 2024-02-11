@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +21,8 @@ import java.time.LocalDateTime;
 @Transactional
 public class EmailServiceImpl implements EmailService {
 
-    private final JavaMailSender mailSender;
     private final EmailClient emailClient;
-    public static final String PASSWORD_SUBJECT = "Value Plus Forgot Password";
+    public static final String PASSWORD_SUBJECT = "Action Required: Password Reset for Value Mart";
     public static final String PIN_SUBJECT = "Value Plus Reset Pin";
     public static final String VERIFY_EMAIL_SUBJECT = "Value Mart Verify Email";
 
@@ -36,19 +34,40 @@ public class EmailServiceImpl implements EmailService {
 
     public static final String PIN_UPDATE = "Value Mart Pin Update";
 
+    public static final String NAME = "ValueMart";
+
     private final VelocityEngine velocityEngine;
     public static final String PRODUCT_ORDER_CREATION_SUBJECT = "Value Plus Product Order Creation Notification";
 
 
     @Override
     @Async
-    public void sendCustomerCreationEmail(User user) throws Exception {
+    public void sendCustomerCreationEmail(User user)  {
         Template template = velocityEngine.getTemplate("/templates/customercreate.vm");
         VelocityContext context = new VelocityContext();
-        context.put("CustomerName", user.getFirstName());
+        context.put("CustomerName", user.getFirstName() + " " + user.getLastName());
         context.put("loginurl",LOGIN_URL);
-        context.put("MallName","ValueMart");
+        context.put("MallName",NAME);
         context.put("Year", LocalDateTime.now().getYear());
+        StringWriter stringWriter = new StringWriter();
+        template.merge(context, stringWriter);
+
+        emailClient.sendSimpleMessage(user.getEmail(), USER_CREATION_SUBJECT, stringWriter.toString());
+    }
+
+    @Override
+    @Async
+    public void sendStaffCreationEmail(User user, User admin,String branchName)  {
+        Template template = velocityEngine.getTemplate("/templates/staffcreate.vm");
+        VelocityContext context = new VelocityContext();
+        context.put("CustomerName", user.getFirstName() + " " + user.getLastName());
+        context.put("AdminName",admin.getFirstName() + " " + admin.getLastName());
+        context.put("passsword",user.getPassword());
+        context.put("loginurl",LOGIN_URL);
+        context.put("MallName",NAME);
+        context.put("Year", LocalDateTime.now().getYear());
+        context.put("branch",branchName);
+        context.put("email",user.getEmail());
         StringWriter stringWriter = new StringWriter();
         template.merge(context, stringWriter);
 
@@ -61,6 +80,8 @@ public class EmailServiceImpl implements EmailService {
         VelocityContext context = new VelocityContext();
         context.put("name", user.getFirstName() + " " + user.getLastName());
         context.put("link", link);
+        context.put("Mall_Name",NAME);
+        context.put("Year", LocalDateTime.now().getYear());
         StringWriter stringWriter = new StringWriter();
         template.merge(context, stringWriter);
 

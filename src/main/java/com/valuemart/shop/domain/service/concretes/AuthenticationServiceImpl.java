@@ -75,13 +75,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public ResponseMessage signUp(UserCreate userCreate){
         if (userCreate.getRole().name().equals("ROLE_ADMIN")){
-            return createAdmin(userCreate);
-        } else if (userCreate.getRole().name().equals("ROLE_STAFF")) {
-            return createStaff(userCreate);
-        } else if (userCreate.getRole().name().equals("ROLE_CUSTOMER")) {
+            return createAdmin(userCreate);}
+//        } else if (userCreate.getRole().name().equals("ROLE_STAFF")) {
+//            return createStaff(userCreate);
+         else if (userCreate.getRole().name().equals("ROLE_CUSTOMER")) {
             return createCustomer(userCreate);
         }
         else throw new BadRequestException("User role not Found");
+    }
+
+
+    @Override
+    public ResponseMessage createStaffByAdmin(UserCreate userCreate, User user){
+       return createStaff(userCreate, user);
     }
 
 
@@ -148,13 +154,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
 
-    public ResponseMessage createStaff(UserCreate userCreate){
+    public ResponseMessage createStaff(UserCreate userCreate,User user){
         try {
 
             Role role = roleRepository.findFirstByName(ROLE_STAFF.name());
             Branch branch = branchRepository.findById(Long.valueOf(userCreate.getBranchId())).orElseThrow();
             if (!userRepository.existsUserByEmail(userCreate.getEmail())){
-                userRepository.save(User.builder().
+              User savedStaff =  userRepository.save(User.builder().
                         email(userCreate.getEmail()).
                         firstName(userCreate.getFirstName()).
                         lastName(userCreate.getLastName())
@@ -164,8 +170,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         .enabled(true)
                         .authorities(Collections.emptyList())
                         .build());
-                log.info("Staff successfully created");
-                return ResponseMessage.builder().message("Staff Signed Up Successfully").build();
+                log.info("Staff successfully created by Admin " + user.getFirstName());
+
+                emailService.sendStaffCreationEmail(savedStaff,user,branch.getName());
+                return ResponseMessage.builder().message("Staff successfully created by Admin"+ user.getFirstName()).build();
 
             }}
 

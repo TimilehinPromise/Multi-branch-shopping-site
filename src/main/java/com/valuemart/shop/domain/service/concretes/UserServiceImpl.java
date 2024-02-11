@@ -136,8 +136,10 @@ public class UserServiceImpl implements UserService {
        return addressRepository.findAllByUserId(userId,pageable).map(Address::toModel);
     }
 
+
+
     @Override
-    public void sendResetPassword(String email){
+    public ResponseMessage sendResetPassword(String email){
         User user = userRepository.findByEmailAndDeletedFalse(email)
                 .orElseThrow(() -> new NotFoundException("Invalid Credentials"));
 
@@ -147,10 +149,12 @@ public class UserServiceImpl implements UserService {
         passwordResetTokenRepository.save(resetToken);
 
         emailService.sendPasswordReset(user, userPasswordResetLink.concat(token));
+
+        return ResponseMessage.builder().message("Reset password sent successfully to "+ email ).build();
     }
 
     @Override
-    public User resetPassword(NewPassword newPassword)  {
+    public ResponseMessage resetPassword(NewPassword newPassword)  {
         Optional<PasswordResetToken> resetToken = passwordResetTokenRepository.findByResetToken(newPassword.getResetToken());
         if (resetToken.isEmpty()) {
             throw new BadRequestException("expired link");
@@ -173,8 +177,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         passwordResetTokenRepository.deleteById(userId);
 
-       // auditEvent.publish(oldObject, user, USER_PASSWORD_RESET, USER);
-        return user;
+        return ResponseMessage.builder().message("Reset password successful to ").build();
     }
 
     @Override

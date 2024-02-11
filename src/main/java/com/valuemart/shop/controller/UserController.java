@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
+import org.springframework.validation.MessageCodeFormatter;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +55,7 @@ public class UserController {
         User principal =  getLoggedInUser();
         return userService.getAllAddresses(principal.getId(),pageable);
     }
+
 
     @GetMapping("/getAddress/{addressId}")
     public AddressModel getAddress(@PathVariable Long addressId){

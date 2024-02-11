@@ -71,6 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/v1/api/admin/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_STAFF")
+                .antMatchers("v1/api/super").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/v1/auth/**",
                         "/swagger**",
                         "/swagger-resources/**",

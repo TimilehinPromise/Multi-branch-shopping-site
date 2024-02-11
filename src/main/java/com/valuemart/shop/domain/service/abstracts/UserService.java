@@ -32,9 +32,9 @@ public interface UserService {
 
     Page<AddressModel> getAllAddresses(Long userId, Pageable pageable);
 
-    void sendResetPassword(String email);
+    ResponseMessage sendResetPassword(String email);
 
-    User resetPassword(NewPassword newPassword);
+    ResponseMessage resetPassword(NewPassword newPassword);
 
     User changePassword(Long userId, PasswordChange passwordChange);
 }

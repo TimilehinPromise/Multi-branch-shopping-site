@@ -3,12 +3,15 @@ package com.valuemart.shop.controller;
 import com.valuemart.shop.domain.ResponseMessage;
 import com.valuemart.shop.domain.models.CustomerLoginDTO;
 import com.valuemart.shop.domain.models.LoginResponseModel;
-import com.valuemart.shop.domain.models.NewPassword;
 import com.valuemart.shop.domain.models.UserCreate;
 import com.valuemart.shop.domain.service.abstracts.AuthenticationService;
-import com.valuemart.shop.domain.service.abstracts.UserService;
+import com.valuemart.shop.domain.util.UserUtils;
+import com.valuemart.shop.persistence.entity.User;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -16,16 +19,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @Slf4j
-@RequestMapping(value = "v1/api/auth", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-public class AuthController {
+@RequestMapping(value = "v1/api/super", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+public class SuperController {
 
     private final AuthenticationService authenticationService;
 
-    private final UserService userService;
-
-    public AuthController(AuthenticationService authenticationService, UserService userService) {
+    public SuperController(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
-        this.userService = userService;
     }
 
     @PostMapping("/login")
@@ -39,15 +39,10 @@ public class AuthController {
         return authenticationService.signUp(userCreate);
     }
 
-    @PostMapping("/sendResetPassword")
-    public ResponseMessage sendResetPassword(@RequestParam String email){
-        return  userService.sendResetPassword(email);
+    @PostMapping("/createStaff")
+    public ResponseMessage createStaff(@Valid @RequestBody UserCreate userCreate) {
+        User user = UserUtils.getLoggedInUser();
+        return authenticationService.createStaffByAdmin(userCreate,user);
     }
-
-    @PostMapping("/resetPassword")
-    public ResponseMessage resetPassword(@RequestBody NewPassword password){
-        return  userService.resetPassword(password);
-    }
-
 
 }
