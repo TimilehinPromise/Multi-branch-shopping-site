@@ -26,7 +26,7 @@ public class EmailClient {
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-            helper.setFrom("awoyeyetimilehin@gmail.com");
+            helper.setFrom("customercare@valuemartdc.com");
             helper.setTo(InternetAddress.parse(to));
             helper.setSubject(subject);
             helper.setText(text, true);

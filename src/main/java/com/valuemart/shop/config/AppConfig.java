@@ -70,10 +70,15 @@ public class AppConfig {
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
-        mailSender.setHost("smtp.gmail.com");
+//        mailSender.setHost("smtp.gmail.com");
+//        mailSender.setPort(587);
+//        mailSender.setUsername("awoyeyetimilehin");
+//        mailSender.setPassword("uhubuatjefvxyjmj");
+
+        mailSender.setHost("mail.valuemartdc.com");
         mailSender.setPort(587);
-        mailSender.setUsername("awoyeyetimilehin");
-        mailSender.setPassword("uhubuatjefvxyjmj");
+        mailSender.setUsername("customercare@valuemartdc.com");
+        mailSender.setPassword("Custom3rService@2024");
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
