@@ -10,5 +10,8 @@ public interface ProductOrderService {
 
     OrderModel getOrder(Long orderId, Long branchId, User user);
 
+
+    OrderModel getOrder(Long branchId, User user);
+
     ResponseMessage updateOrderByAdmin(Long orderId, Long branchId, OrderStatus status, User user);
 }

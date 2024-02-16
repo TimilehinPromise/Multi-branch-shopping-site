@@ -79,7 +79,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
                 .branchId(Long.valueOf(user.getBranchId()))
                 .status(OrderStatus.PENDING)
                 .address(buildAddress(addressModel))
-                .paymentProvider("RexPay")
+                .paymentProvider("Flutterwave")
                 .user(user)
                 .message(message)
                 .fromCheckout(true)
@@ -101,6 +101,14 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     @Override
     public OrderModel getOrder(Long orderId, Long branchId, User user){
         OrderModel model = ordersRepository.findFirstByIdAndBranchId(orderId,branchId).map(Orders::toModel).orElseThrow( );
+        Wallet wallet = walletService.getWallet(user);
+        model.setDiscountedAmount(model.getAmount().subtract(wallet.getAmount()));
+        return model;
+    }
+
+    @Override
+    public OrderModel getOrder(Long branchId, User user){
+        OrderModel model = ordersRepository.findFirstByUserIdAndStatusAndBranchIdOrderByCreatedAtDesc(user.getId(), OrderStatus.PENDING,branchId).map(Orders::toModel).orElseThrow( );
         Wallet wallet = walletService.getWallet(user);
         model.setDiscountedAmount(model.getAmount().subtract(wallet.getAmount()));
         return model;

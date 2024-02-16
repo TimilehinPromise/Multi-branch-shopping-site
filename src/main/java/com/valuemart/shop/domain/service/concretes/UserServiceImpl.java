@@ -44,6 +44,9 @@ public class UserServiceImpl implements UserService {
     @Value("${app.user.reset-password}")
     String userPasswordResetLink;
 
+    @Value("${app.login.url}")
+    String loginUrl;
+
     @Override
     public ResponseMessage updateProfile(UserUpdate userUpdate){
 
@@ -177,7 +180,9 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         passwordResetTokenRepository.deleteById(userId);
 
-        return ResponseMessage.builder().message("Reset password successful to ").build();
+        emailService.sendPasswordReset(user, loginUrl);
+
+        return ResponseMessage.builder().message("Reset password successful").build();
     }
 
     @Override
@@ -194,6 +199,8 @@ public class UserServiceImpl implements UserService {
         user.setPassword(hashedPassword);
 
         var savedEntity = userRepository.save(user);
+
+        emailService.passwordResetNotification(user,loginUrl);
 
       //  auditEvent.publish(oldObject, savedEntity, USER_PASSWORD_UPDATE, USER);
         return savedEntity;

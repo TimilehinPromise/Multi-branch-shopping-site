@@ -26,13 +26,13 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentProcessorFactory factory;
 
     @Override
-    public ChargeModel createPayment(Long orderId, User user){
+    public ChargeModel createPayment( User user){
 
         Payment.PaymentReference reference = new Payment.PaymentReference();
         reference.setUserId(user.getId().toString());
         reference.setReferenceId(PaymentUtils.generateTransRef());
 
-        OrderModel model = orderService.getOrder(orderId, Long.valueOf(user.getBranchId()),user);
+        OrderModel model = orderService.getOrder(Long.valueOf(user.getBranchId()),user);
 
         final PaymentProcessor paymentProcessor = factory.getProcessor("Flutterwave");
 

@@ -32,12 +32,11 @@ public class EmailServiceImpl implements EmailService {
 
     public static final String LOGIN_URL = "localhost:9010/v1/api/auth/login";
 
-    public static final String PIN_UPDATE = "Value Mart Pin Update";
+    public static final String PIN_UPDATE = "Password Update Alert for Your ValueMart Account";
 
     public static final String NAME = "ValueMart";
 
     private final VelocityEngine velocityEngine;
-    public static final String PRODUCT_ORDER_CREATION_SUBJECT = "Value Plus Product Order Creation Notification";
 
 
     @Override
@@ -88,6 +87,20 @@ public class EmailServiceImpl implements EmailService {
         emailClient.sendSimpleMessage(user.getEmail(), PASSWORD_SUBJECT, stringWriter.toString());
     }
 
+    @Override
+    public void passwordResetNotification(User user, String link)  {
+        Template template = velocityEngine.getTemplate("/templates/passwordresetnotification.vm");
+        VelocityContext context = new VelocityContext();
+        context.put("name", user.getFirstName() + " " + user.getLastName());
+        context.put("link", link);
+        context.put("Mall_Name",NAME);
+        context.put("Year", LocalDateTime.now().getYear());
+        StringWriter stringWriter = new StringWriter();
+        template.merge(context, stringWriter);
+
+        emailClient.sendSimpleMessage(user.getEmail(), PIN_UPDATE, stringWriter.toString());
+    }
+
     public void testSendPasswordReset(User user, String link) throws Exception {
         Template template = velocityEngine.getTemplate("/templates/v2/passwordreset.vm");
         VelocityContext context = new VelocityContext();
@@ -99,28 +112,18 @@ public class EmailServiceImpl implements EmailService {
         emailClient.testSendSimpleMessage(user.getEmail(), PASSWORD_SUBJECT, stringWriter.toString());
     }
 
-    @Override
-    public void sendPinReset(User user, String link) throws Exception {
-        Template template = velocityEngine.getTemplate("/templates/v2/pinreset.vm");
-        VelocityContext context = new VelocityContext();
-        context.put("name", user.getFirstName() + " " + user.getLastName());
-        context.put("link", link);
-        StringWriter stringWriter = new StringWriter();
-        template.merge(context, stringWriter);
-
-        emailClient.sendSimpleMessage(user.getEmail(), PIN_SUBJECT, stringWriter.toString());
-    }
-
-    @Override
-    public void sendPinNotification(User user) throws Exception {
-        Template template = velocityEngine.getTemplate("/templates/v2/pinupdate.vm");
-        VelocityContext context = new VelocityContext();
-        context.put("name", user.getFirstName() + " " + user.getLastName());
-        StringWriter stringWriter = new StringWriter();
-        template.merge(context, stringWriter);
-
-        emailClient.sendSimpleMessage(user.getEmail(), PIN_UPDATE, stringWriter.toString());
-    }
+//
+//
+//    @Override
+//    public void sendPinNotification(User user) throws Exception {
+//        Template template = velocityEngine.getTemplate("/templates/v2/pinupdate.vm");
+//        VelocityContext context = new VelocityContext();
+//        context.put("name", user.getFirstName() + " " + user.getLastName());
+//        StringWriter stringWriter = new StringWriter();
+//        template.merge(context, stringWriter);
+//
+//        emailClient.sendSimpleMessage(user.getEmail(), PIN_UPDATE, stringWriter.toString());
+//    }
 
     @Override
     public void sendEmailVerification(User user, String link) throws Exception {
