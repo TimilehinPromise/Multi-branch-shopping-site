@@ -166,6 +166,11 @@ public class ProductServiceImpl implements ProductsService {
     }
 
     @Override
+    public Page<ProductModel> getAllProductStore(Long branchId,Pageable pageable){
+        return productRepository.findAll(branchId,pageable).map(Product::toModel);
+    }
+
+    @Override
     public Page<ProductModel> getAllProductByCategory(Long id,Pageable pageable){
 
         return productRepository.findAllByBusinessCategoryIdAndDeletedFalse(id,pageable).map(Product::toModel);
@@ -236,8 +241,13 @@ public class ProductServiceImpl implements ProductsService {
     @Override
     public List<ProductModel> getProductsBySeason(){
         Seasons currentSeason = Seasons.getCurrentSeason();
-        System.out.println(currentSeason.name());
       return  productRepository.findAllBySeasonAndDeletedFalse(currentSeason.name()).stream().map(Product::toModel).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductModel> getProductsBySeasonStore(Long branchId){
+        Seasons currentSeason = Seasons.getCurrentSeason();
+        return  productRepository.findAllBySeasonAndDeletedFalseStore(currentSeason.name(),branchId).stream().map(Product::toModel).collect(Collectors.toList());
     }
 
 

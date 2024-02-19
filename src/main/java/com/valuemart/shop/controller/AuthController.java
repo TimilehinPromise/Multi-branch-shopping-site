@@ -1,10 +1,7 @@
 package com.valuemart.shop.controller;
 
 import com.valuemart.shop.domain.ResponseMessage;
-import com.valuemart.shop.domain.models.CustomerLoginDTO;
-import com.valuemart.shop.domain.models.LoginResponseModel;
-import com.valuemart.shop.domain.models.NewPassword;
-import com.valuemart.shop.domain.models.UserCreate;
+import com.valuemart.shop.domain.models.*;
 import com.valuemart.shop.domain.service.abstracts.AuthenticationService;
 import com.valuemart.shop.domain.service.abstracts.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +37,8 @@ public class AuthController {
     }
 
     @PostMapping("/sendResetPassword")
-    public ResponseMessage sendResetPassword(@RequestParam String email){
-        return  userService.sendResetPassword(email);
+    public ResponseMessage sendResetPassword(@RequestBody SendResetPasswordRequest request){
+        return  userService.sendResetPassword(request.getEmail());
     }
 
     @PostMapping("/resetPassword")

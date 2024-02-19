@@ -27,8 +27,8 @@ public class StoreController {
 
 
     @GetMapping("")
-    public Page<ProductModel> getAllProduct(@PageableDefault(sort = "id", direction = DESC) Pageable pageable) {
-        return productsService.getAllProduct(pageable);
+    public Page<ProductModel> getAllProduct(@PageableDefault(sort = "id", direction = DESC) Pageable pageable,@PathVariable Long branchId) {
+        return productsService.getAllProductStore(branchId,pageable);
     }
 
     @GetMapping("/category/{categoryId}")
@@ -58,8 +58,8 @@ public class StoreController {
     }
 
     @GetMapping("/season")
-    public List<ProductModel> getAllProductBySeason() {
-        return productsService.getProductsBySeason();
+    public List<ProductModel> getAllProductBySeason(@PathVariable Long branchId) {
+        return productsService.getProductsBySeasonStore(branchId);
     }
 
     @GetMapping("/search")

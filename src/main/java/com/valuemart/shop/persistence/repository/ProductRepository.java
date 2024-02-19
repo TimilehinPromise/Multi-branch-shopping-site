@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.Nullable;
 
 import java.util.List;
@@ -18,6 +19,9 @@ public interface ProductRepository extends JpaRepository<Product,Long>, JpaSpeci
     boolean existsProductByNameIgnoreCaseAndDeletedFalse(String name);
 
     Page<Product> findAllByBusinessCategoryIdAndDeletedFalse(Long categoryId, Pageable pageable);
+
+    @Query("select p from Product p where p.deleted = false and p.branches =: branchId")
+    Page<Product>findAll(Long branchId,Pageable pageable);
 
     Page<Product>  findAllByBusinessSubcategoryIdAndDeletedFalse(Long subCategoryId, Pageable pageable);
 
@@ -33,6 +37,9 @@ public interface ProductRepository extends JpaRepository<Product,Long>, JpaSpeci
     List<Product> findAllByBrandAndDeletedFalseAndSkuIdNot(String brand,String skuId);
 
     List<Product> findAllBySeasonAndDeletedFalse(String season);
+
+    @Query("select p from Product  p  where p.season = :season and p.deleted = false and p.branches = :branchId ")
+    List<Product> findAllBySeasonAndDeletedFalseStore(String season,Long branchId);
 
     List<Product> findAllByBusinessSubcategoryIdAndDeletedFalseAndSkuIdNot(Long subCategoryId,String skuId);
 

@@ -17,7 +17,9 @@ public interface ProductsService {
 
     Page<ProductModel> getAllProduct(Pageable pageable);
 
-    Page<ProductModel>  getAllProductByCategory(Long id,Pageable pageable);
+    Page<ProductModel> getAllProductStore(Long branchId, Pageable pageable);
+
+    Page<ProductModel>  getAllProductByCategory(Long id, Pageable pageable);
 
     Page<ProductModel>  getAllProductBySubCategory(Long id,Pageable pageable);
 
@@ -28,6 +30,8 @@ public interface ProductsService {
     List<ProductModel> getProductRelatedBy(String related, String keyword, String sku);
 
     List<ProductModel> getProductsBySeason();
+
+    List<ProductModel> getProductsBySeasonStore(Long branchId);
 
     Page<ProductModel> filterProducts(String skuId,
                                       Long productName,
