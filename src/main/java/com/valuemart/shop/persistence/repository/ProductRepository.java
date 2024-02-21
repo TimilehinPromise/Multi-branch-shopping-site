@@ -20,8 +20,9 @@ public interface ProductRepository extends JpaRepository<Product,Long>, JpaSpeci
 
     Page<Product> findAllByBusinessCategoryIdAndDeletedFalse(Long categoryId, Pageable pageable);
 
-    @Query("select p from Product p where p.deleted = false and p.branches =: branchId")
-    Page<Product>findAll(Long branchId,Pageable pageable);
+//    @Query("select p from Product p where p.deleted = false and p.branches = :branchId")
+    @Query("SELECT p FROM Product p JOIN p.branches b WHERE p.deleted = false AND b.id = :branchId")
+    Page<Product>findAllProductByBranch(Long branchId,Pageable pageable);
 
     Page<Product>  findAllByBusinessSubcategoryIdAndDeletedFalse(Long subCategoryId, Pageable pageable);
 
@@ -38,7 +39,7 @@ public interface ProductRepository extends JpaRepository<Product,Long>, JpaSpeci
 
     List<Product> findAllBySeasonAndDeletedFalse(String season);
 
-    @Query("select p from Product  p  where p.season = :season and p.deleted = false and p.branches = :branchId ")
+    @Query("select p from Product  p JOIN p.branches b where p.season = :season and p.deleted = false and b.id = :branchId ")
     List<Product> findAllBySeasonAndDeletedFalseStore(String season,Long branchId);
 
     List<Product> findAllByBusinessSubcategoryIdAndDeletedFalseAndSkuIdNot(Long subCategoryId,String skuId);

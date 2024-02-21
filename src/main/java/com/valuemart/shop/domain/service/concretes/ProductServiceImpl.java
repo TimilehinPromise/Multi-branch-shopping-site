@@ -167,7 +167,7 @@ public class ProductServiceImpl implements ProductsService {
 
     @Override
     public Page<ProductModel> getAllProductStore(Long branchId,Pageable pageable){
-        return productRepository.findAll(branchId,pageable).map(Product::toModel);
+        return productRepository.findAllProductByBranch(branchId,pageable).map(Product::toModel);
     }
 
     @Override

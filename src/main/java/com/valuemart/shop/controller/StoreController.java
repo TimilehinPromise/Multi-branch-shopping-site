@@ -26,7 +26,7 @@ public class StoreController {
     private final ProductsService productsService;
 
 
-    @GetMapping("")
+    @GetMapping("/{branchId}")
     public Page<ProductModel> getAllProduct(@PageableDefault(sort = "id", direction = DESC) Pageable pageable,@PathVariable Long branchId) {
         return productsService.getAllProductStore(branchId,pageable);
     }
@@ -57,7 +57,7 @@ public class StoreController {
         return productsService.getProductRelatedBy(related,keyword,sku);
     }
 
-    @GetMapping("/season")
+    @GetMapping("/season/{branchId}")
     public List<ProductModel> getAllProductBySeason(@PathVariable Long branchId) {
         return productsService.getProductsBySeasonStore(branchId);
     }
