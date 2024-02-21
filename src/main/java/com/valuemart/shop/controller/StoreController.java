@@ -26,7 +26,7 @@ public class StoreController {
     private final ProductsService productsService;
 
 
-    @GetMapping("/{branchId}")
+    @GetMapping("getAll/{branchId}")
     public Page<ProductModel> getAllProduct(@PageableDefault(sort = "id", direction = DESC) Pageable pageable,@PathVariable Long branchId) {
         return productsService.getAllProductStore(branchId,pageable);
     }

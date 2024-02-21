@@ -27,7 +27,7 @@ public class ProductCustomerController {
     private final ProductsService productsService;
 
 
-    @GetMapping("")
+    @GetMapping("/getAll")
     public Page<ProductModel> getAllProduct(@PageableDefault(sort = "id", direction = DESC) Pageable pageable) {
         User user = UserUtils.getLoggedInUser();
         return productsService.getAllProductStore(Long.valueOf(user.getBranchId()),pageable);
