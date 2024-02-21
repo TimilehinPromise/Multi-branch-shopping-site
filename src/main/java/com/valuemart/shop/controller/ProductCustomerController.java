@@ -2,6 +2,8 @@ package com.valuemart.shop.controller;
 
 import com.valuemart.shop.domain.models.ProductModel;
 import com.valuemart.shop.domain.service.abstracts.ProductsService;
+import com.valuemart.shop.domain.util.UserUtils;
+import com.valuemart.shop.persistence.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,7 +29,8 @@ public class ProductCustomerController {
 
     @GetMapping("")
     public Page<ProductModel> getAllProduct(@PageableDefault(sort = "id", direction = DESC) Pageable pageable) {
-        return productsService.getAllProduct(pageable);
+        User user = UserUtils.getLoggedInUser();
+        return productsService.getAllProductStore(Long.valueOf(user.getBranchId()),pageable);
     }
 
     @GetMapping("/category/{categoryId}")
@@ -52,7 +55,8 @@ public class ProductCustomerController {
 
     @GetMapping("/season")
     public List<ProductModel> getAllProductBySeason() {
-        return productsService.getProductsBySeason();
+        User user = UserUtils.getLoggedInUser();
+        return productsService.getProductsBySeasonStore(Long.valueOf(user.getBranchId()));
     }
 
 
