@@ -16,6 +16,7 @@ public class UserUpdate {
 
     private String phone;
     private List<AddressDTO> addressList;
+    private int branchId;
     @JsonIgnore
     private User user;
 

@@ -53,6 +53,7 @@ public class UserServiceImpl implements UserService {
         if (!userUpdate.getPhone().isBlank()){
         Optional<User> existingUser = userRepository.findById(userUpdate.getUser().getId());
         existingUser.get().setPhone(userUpdate.getPhone());
+        existingUser.get().setBranchId(userUpdate.getBranchId());
         userRepository.save(existingUser.get());
         }
 
