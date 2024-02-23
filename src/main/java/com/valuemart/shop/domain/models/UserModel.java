@@ -15,7 +15,6 @@ public class UserModel {
     private String email;
     private String phone;
     private String royaltyCode;
-    private String address;
     private boolean emailVerified;
     private int branchId;
 }

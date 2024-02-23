@@ -20,6 +20,7 @@ public class UserCreate {
     private String password;
     private String branchId;
     private RoleType role;
+    private String phone;
     @NotEmpty
     @Email
     private String email;

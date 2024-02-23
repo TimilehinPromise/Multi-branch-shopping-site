@@ -38,6 +38,11 @@ public class UserController {
       return userService.updateProfile(request);
     }
 
+    @GetMapping("")
+    public UserModel getUser(){
+        return getLoggedInUser().toModel();
+    }
+
     @PostMapping("/addAddress")
     public ResponseMessage addAddress(@Valid @RequestBody AddressDTO request) {
         User principal =  getLoggedInUser();

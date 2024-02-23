@@ -1,11 +1,8 @@
 package com.valuemart.shop.domain.service.abstracts;
 
 import com.valuemart.shop.domain.ResponseMessage;
-import com.valuemart.shop.domain.models.NewPassword;
-import com.valuemart.shop.domain.models.PasswordChange;
+import com.valuemart.shop.domain.models.*;
 import com.valuemart.shop.domain.models.dto.AddressDTO;
-import com.valuemart.shop.domain.models.AddressModel;
-import com.valuemart.shop.domain.models.UserUpdate;
 import com.valuemart.shop.persistence.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

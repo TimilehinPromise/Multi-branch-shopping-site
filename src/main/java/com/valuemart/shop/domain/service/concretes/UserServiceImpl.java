@@ -1,11 +1,8 @@
 package com.valuemart.shop.domain.service.concretes;
 
 import com.valuemart.shop.domain.ResponseMessage;
-import com.valuemart.shop.domain.models.NewPassword;
-import com.valuemart.shop.domain.models.PasswordChange;
+import com.valuemart.shop.domain.models.*;
 import com.valuemart.shop.domain.models.dto.AddressDTO;
-import com.valuemart.shop.domain.models.AddressModel;
-import com.valuemart.shop.domain.models.UserUpdate;
 import com.valuemart.shop.domain.service.abstracts.EmailService;
 import com.valuemart.shop.domain.service.abstracts.UserService;
 import com.valuemart.shop.domain.util.GeneratorUtils;

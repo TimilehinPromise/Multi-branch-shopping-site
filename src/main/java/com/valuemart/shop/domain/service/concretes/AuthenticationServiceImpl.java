@@ -101,7 +101,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     deleted(false).
                     activated(true).
                     firstName(userCreate.getFirstName()).
-                    lastName(userCreate.getLastName())
+                    lastName(userCreate.getLastName()).
+                    phone(userCreate.getPhone())
                              .branchId(Integer.parseInt(userCreate.getBranchId()))
                     .role(role)
                     .password(passwordEncoder.encode(userCreate.getPassword()))
