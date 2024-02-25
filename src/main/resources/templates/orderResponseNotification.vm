@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - $Mall_Name</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #eeeeee;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .email-header {
+            background-color: #17a2b8; /* A fresh blue shade */
+            color: #ffffff;
+            padding: 20px 40px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            text-align: left;
+        }
+        .email-body {
+            padding: 40px;
+            color: #333333;
+            background-color: #ffffff;
+            line-height: 1.5;
+        }
+        .email-body h1 {
+            margin-top: 0;
+        }
+        .order-summary {
+            background: #f2f2f2;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            align-items: center;
+        }
+        .product-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .product-price {
+            text-align: right;
+            flex: 0 0 100px; /* Adjust width as needed */
+        }
+        .highlighted-message {
+            background-color: #ffeb3b; /* A more vibrant yellow */
+            padding: 15px;
+            border-left: 4px solid #ffc107; /* A matching vibrant yellow border */
+            font-weight: bold;
+            border-radius: 4px;
+            font-size: 1.2em; /* Larger font size for importance */
+            text-align: center; /* Centered text for emphasis */
+            display: block; /* Use block to allow for margins and padding */
+            margin-top: 20px; /* Space before the message */
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+            background: #f2f2f2;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        .footer a {
+            color: #17a2b8;
+            text-decoration: none;
+        }
+        /* Responsive design adjustments */
+        @media only screen and (max-width: 600px) {
+            .email-header, .email-body, .footer {
+                padding: 20px;
+            }
+            .order-summary {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="email-header">
+        <h1>Your $Mall_Name Order Confirmation</h1>
+    </div>
+    <div class="email-body">
+        <p class="highlighted-message">$OrderStatusMessage</p>
+
+        <div class="order-summary">
+            <h2>Your Order Details:</h2>
+            #foreach ($item in $OrderDetails)
+                <div class="order-item">
+                    <span class="product-name">$item.quantity x $item.name</span>
+                    <span class="product-price">₦$item.price</span>
+                </div>
+            #end
+        </div>
+
+        <p>If you have any questions or need to make changes to your order, please <a href="$link">contact us</a> immediately.</p>
+    </div>
+
+    <div class="footer">
+        <p>Thank you for shopping with $Mall_Name!</p>
+        <p>If you need assistance, feel free to <a href="$link">reach out to our support team</a>.</p>
+        <p>&copy; $Year $Mall_Name. All rights reserved.</p>
+    </div>
+</div>
+</body>
+</html>
+</html>

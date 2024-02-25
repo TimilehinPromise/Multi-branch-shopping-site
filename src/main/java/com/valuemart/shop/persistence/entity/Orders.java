@@ -15,7 +15,6 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.TimeZone;
 
 
@@ -46,8 +45,10 @@ public class Orders extends BasePersistentEntity implements ToModel{
     private String details;
     private boolean fromCheckout;
     private String message;
-    private String product;
     private Long branchId;
+    private BigDecimal deliveryAmount;
+    private String shopResponse;
+    private Long addressId;
 
     @Override
     public OrderModel toModel() {
@@ -66,10 +67,12 @@ public class Orders extends BasePersistentEntity implements ToModel{
                         .branchId(branchId)
                         .details(cartModel)
                         .paymentProvider(paymentProvider)
-                        .product(product)
                         .discountedAmount(discountedAmount)
                         .status(status)
                         .user(user.toModel())
+                        .deliveryAmount(deliveryAmount)
+                        .orderId(id)
+                        .shopResponse(shopResponse)
                         .build();
     }
 }

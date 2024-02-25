@@ -4,5 +4,5 @@ import com.valuemart.shop.domain.models.ChargeModel;
 import com.valuemart.shop.persistence.entity.User;
 
 public interface PaymentService {
-    ChargeModel createPayment(User user);
+    ChargeModel createPayment(User user,Long addressId);
 }

@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 @Builder
 @Data
 public class OrderModel {
+    private Long orderId;
     private BigDecimal amount;
     private BigDecimal discountedAmount;
     private String address;
@@ -21,6 +22,7 @@ public class OrderModel {
     private String paymentProvider;
     private CartModel details;
     private String message;
-    private String product;
     private Long branchId;
+    private BigDecimal deliveryAmount;
+    private String shopResponse;
 }

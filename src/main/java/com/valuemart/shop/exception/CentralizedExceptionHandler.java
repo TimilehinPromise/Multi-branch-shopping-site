@@ -81,6 +81,11 @@ public class CentralizedExceptionHandler extends ResponseEntityExceptionHandler 
         return new ResponseEntity<>(apiError, apiError.getStatus());
     }
 
+    @ExceptionHandler(DeliveryAreaNotFoundException.class)
+    public ResponseEntity<Object> handleDeliveryAreaNotFoundException(DeliveryAreaNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler({DataIntegrityViolationException.class})
     public ResponseEntity<Object> handleNotDataIntegrityViolationException(DataIntegrityViolationException ex) {
         ApiError apiError = new ApiError(HttpStatus.CONFLICT, ex.getMessage(), ex.getMessage());

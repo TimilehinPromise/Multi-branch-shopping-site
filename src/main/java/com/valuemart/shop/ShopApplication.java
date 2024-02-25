@@ -12,6 +12,7 @@ import static java.util.TimeZone.setDefault;
 
 
 @SpringBootApplication
+@EnableAsync
 public class ShopApplication {
 
 	public static void main(String[] args) {

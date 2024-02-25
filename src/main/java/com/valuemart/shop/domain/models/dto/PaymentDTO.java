@@ -7,5 +7,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PaymentDTO {
 
-    private Long orderId;
+    private Long addressId;
+
 }

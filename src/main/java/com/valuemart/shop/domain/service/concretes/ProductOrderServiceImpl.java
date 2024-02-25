@@ -9,10 +9,7 @@ import com.valuemart.shop.domain.models.AddressModel;
 import com.valuemart.shop.domain.models.CartModel;
 import com.valuemart.shop.domain.models.OrderModel;
 import com.valuemart.shop.domain.models.enums.OrderStatus;
-import com.valuemart.shop.domain.service.abstracts.CartService;
-import com.valuemart.shop.domain.service.abstracts.ProductOrderService;
-import com.valuemart.shop.domain.service.abstracts.UserService;
-import com.valuemart.shop.domain.service.abstracts.WalletService;
+import com.valuemart.shop.domain.service.abstracts.*;
 import com.valuemart.shop.persistence.entity.Orders;
 import com.valuemart.shop.persistence.entity.User;
 import com.valuemart.shop.persistence.entity.Wallet;
@@ -38,6 +35,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     private final OrdersRepository ordersRepository;
     private final WalletService walletService;
     private final WalletRepository walletRepository;
+    private final EmailService emailService;
     private static final BigDecimal THRESHOLD = BigDecimal.valueOf(1000.00);
 
 
@@ -83,6 +81,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
                 .user(user)
                 .message(message)
                 .fromCheckout(true)
+                .addressId(addressModel.getAddressId())
                 .build();
 
         ordersRepository.save(orders);
@@ -91,6 +90,13 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 
         return ResponseMessage.builder().message("Order successfully created").build();
 
+    }
+
+    @Override
+    public void addDeliveryAmountToOrder(BigDecimal deliveryAmount, Long orderId){
+      Orders order = ordersRepository.findById(orderId).get();
+        order.setDeliveryAmount(deliveryAmount);
+        ordersRepository.save(order);
     }
 
 
@@ -106,6 +112,13 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         return model;
     }
 
+    public Orders getOrderInternal(Long orderId, Long branchId, User user){
+        Orders model = ordersRepository.findFirstByIdAndBranchId(orderId,branchId).orElseThrow( );
+        Wallet wallet = walletService.getWallet(user);
+        model.setDiscountedAmount(model.getAmount().subtract(wallet.getAmount()));
+        return model;
+    }
+
     @Override
     public OrderModel getOrder(Long branchId, User user){
         OrderModel model = ordersRepository.findFirstByUserIdAndStatusAndBranchIdOrderByCreatedAtDesc(user.getId(), OrderStatus.PENDING,branchId).map(Orders::toModel).orElseThrow( );
@@ -115,9 +128,12 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     }
 
     @Override
-    public ResponseMessage updateOrderByAdmin(Long orderId, Long branchId, OrderStatus status,User user){
-      OrderModel model = getOrder(orderId, branchId,user);
-      model.setStatus(status);
+    public ResponseMessage updateOrderByAdmin(Long orderId, Long branchId, OrderStatus status, User user, String message){
+      Orders order = getOrderInternal(orderId, branchId,user);
+        order.setStatus(status);
+        order.setShopResponse(message);
+      OrderModel orderModel =  ordersRepository.save(order).toModel();
+        emailService.orderResponseNotification(user,"emptylinkfornow.com",message,orderModel.getDetails());
         return ResponseMessage.builder().message("Order has been set to " + status.name()).build();
     }
 

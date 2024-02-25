@@ -1,5 +1,8 @@
 package com.valuemart.shop.domain.service.concretes;
 
+import com.valuemart.shop.domain.models.CartListModel;
+import com.valuemart.shop.domain.models.CartModel;
+import com.valuemart.shop.domain.models.ProductModel;
 import com.valuemart.shop.domain.service.abstracts.EmailService;
 import com.valuemart.shop.persistence.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.StringWriter;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -101,16 +108,37 @@ public class EmailServiceImpl implements EmailService {
         emailClient.sendSimpleMessage(user.getEmail(), PIN_UPDATE, stringWriter.toString());
     }
 
-    public void testSendPasswordReset(User user, String link) throws Exception {
-        Template template = velocityEngine.getTemplate("/templates/v2/passwordreset.vm");
+    @Override
+    @Async
+    public void orderResponseNotification(User user, String link, String message, CartModel cart) {
+        Template template = velocityEngine.getTemplate("/templates/orderResponseNotification.vm");
         VelocityContext context = new VelocityContext();
         context.put("name", user.getFirstName() + " " + user.getLastName());
         context.put("link", link);
+        context.put("Mall_Name", NAME);
+        context.put("Year", LocalDateTime.now().getYear());
+        context.put("Message", message);
+
+        List<Map<String, Object>> productDetailsList = new ArrayList<>();
+
+        for (CartListModel item : cart.getCartItems()) {
+            Map<String, Object> productDetails = new HashMap<>();
+            productDetails.put("name", item.getProduct().getName());
+            productDetails.put("quantity", item.getQuantity());
+            productDetails.put("price", item.getPrice());
+            productDetailsList.add(productDetails);
+        }
+
+        context.put("OrderDetails", productDetailsList);
+
         StringWriter stringWriter = new StringWriter();
         template.merge(context, stringWriter);
 
-        emailClient.testSendSimpleMessage(user.getEmail(), PASSWORD_SUBJECT, stringWriter.toString());
+        emailClient.sendSimpleMessage(user.getEmail(), "Order Update From ValueMart", stringWriter.toString());
     }
+
+
+
 
 //
 //
