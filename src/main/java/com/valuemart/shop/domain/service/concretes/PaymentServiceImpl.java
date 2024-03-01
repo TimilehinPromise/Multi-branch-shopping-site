@@ -32,7 +32,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public ChargeModel createPayment( User user,Long addressId){
-
+        System.out.println("create payment method");
         AddressModel addressModel = userService.getAddressByAddressId(addressId, user.getId());
         BigDecimal deliveryAmount =  deliveryService.getDeliveryPriceByArea(addressModel.getCity());
 

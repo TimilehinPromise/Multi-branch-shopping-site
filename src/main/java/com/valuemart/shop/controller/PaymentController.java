@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.valuemart.shop.domain.util.UserUtils.getLoggedInUser;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -26,7 +27,7 @@ public class PaymentController {
     @PostMapping("")
     private ChargeModel initiatePayment(@RequestBody PaymentDTO paymentDTO){
         System.out.println("initiate payment");
-        User user = UserUtils.getLoggedInUser();
+        User user = getLoggedInUser();
        return paymentService.createPayment(user,paymentDTO.getAddressId());
     }
 }
