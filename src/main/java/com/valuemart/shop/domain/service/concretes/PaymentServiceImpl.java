@@ -36,6 +36,7 @@ public class PaymentServiceImpl implements PaymentService {
         AddressModel addressModel = userService.getAddressByAddressId(addressId, user.getId());
         BigDecimal deliveryAmount =  deliveryService.getDeliveryPriceByArea(addressModel.getCity());
         System.out.println(addressModel.toString());
+        System.out.println("three yrs");
         System.out.println(deliveryAmount);
 
         Payment.PaymentReference reference = new Payment.PaymentReference();
