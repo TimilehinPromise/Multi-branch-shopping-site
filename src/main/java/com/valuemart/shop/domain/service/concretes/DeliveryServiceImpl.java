@@ -22,6 +22,8 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     public BigDecimal getDeliveryPriceByArea(String areaName) {
+        System.out.println("service by area");
+        System.out.println(areaName);
         return deliveryAreaRepository.findByAreaName(areaName)
                 .map(DeliveryArea::getDeliveryPrice)
                 .orElseThrow(() -> new DeliveryAreaNotFoundException("We can't deliver to this location"));
