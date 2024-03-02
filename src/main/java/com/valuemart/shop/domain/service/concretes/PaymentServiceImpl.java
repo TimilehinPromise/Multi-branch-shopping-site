@@ -35,12 +35,17 @@ public class PaymentServiceImpl implements PaymentService {
         System.out.println("create payment method");
         AddressModel addressModel = userService.getAddressByAddressId(addressId, user.getId());
         BigDecimal deliveryAmount =  deliveryService.getDeliveryPriceByArea(addressModel.getCity());
+        System.out.println(addressModel.toString());
+        System.out.println(deliveryAmount);
 
         Payment.PaymentReference reference = new Payment.PaymentReference();
         reference.setUserId(user.getId().toString());
         reference.setReferenceId(PaymentUtils.generateTransRef());
 
+        System.out.println(reference);
+
         OrderModel model = orderService.getOrder(Long.valueOf(user.getBranchId()),user);
+        System.out.println(model);
         orderService.addDeliveryAmountToOrder(deliveryAmount, model.getOrderId());
 
         final PaymentProcessor paymentProcessor = factory.getProcessor("Flutterwave");
@@ -51,9 +56,10 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setPaymentReference(reference);
         payment.setStatus(PaymentStatus.CREATED);
         paymentRepository.save(payment);
+        System.out.println(payment);
 
         ChargeModel chargeModel = paymentProcessor.initiatePayment(model,user,payment);
-
+        System.out.println(chargeModel);
         return chargeModel;
     }
 
