@@ -90,6 +90,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
        return createStaff(userCreate, user);
     }
 
+    @Override
+    public ResponseMessage disableStaffByAdmin(Long userId){
+       Optional<User> optionalUser = userRepository.findById(userId);
+
+       if (optionalUser.isEmpty()){
+           throw new BadRequestException("Staff not found");
+       }
+       User user = optionalUser.get();
+       if (!user.isEnabled()){
+           throw new BadRequestException("Staff already disabled");
+       }
+       user.setEnabled(false);
+
+       userRepository.save(user);
+
+       return  ResponseMessage.builder().message("Staff disabled").build();
+    }
+
 
     public ResponseMessage createCustomer(UserCreate userCreate){
         try {

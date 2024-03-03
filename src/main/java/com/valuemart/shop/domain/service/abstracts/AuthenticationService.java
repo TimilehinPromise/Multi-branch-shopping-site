@@ -16,4 +16,6 @@ public interface AuthenticationService {
     ResponseMessage signUp(UserCreate userCreate);
 
     ResponseMessage createStaffByAdmin(UserCreate userCreate, User user);
+
+    ResponseMessage disableStaffByAdmin(Long userId);
 }

@@ -4,6 +4,7 @@ import com.valuemart.shop.domain.ResponseMessage;
 import com.valuemart.shop.domain.models.CustomerLoginDTO;
 import com.valuemart.shop.domain.models.LoginResponseModel;
 import com.valuemart.shop.domain.models.UserCreate;
+import com.valuemart.shop.domain.models.dto.DisableStaffDTO;
 import com.valuemart.shop.domain.service.abstracts.AuthenticationService;
 import com.valuemart.shop.domain.util.UserUtils;
 import com.valuemart.shop.persistence.entity.User;
@@ -28,11 +29,6 @@ public class SuperController {
         this.authenticationService = authenticationService;
     }
 
-    @PostMapping("/login")
-    public LoginResponseModel customerLogin(@Valid @RequestBody CustomerLoginDTO loginForm) {
-        return authenticationService.login(loginForm);
-    }
-
     @PostMapping("/signup")
     public ResponseMessage customerSignUp(@Valid @RequestBody UserCreate userCreate) {
         log.info("customer signup ".concat( userCreate.toString()));
@@ -43,6 +39,11 @@ public class SuperController {
     public ResponseMessage createStaff(@Valid @RequestBody UserCreate userCreate) {
         User user = UserUtils.getLoggedInUser();
         return authenticationService.createStaffByAdmin(userCreate,user);
+    }
+
+    @PostMapping("/disable/staff")
+    public ResponseMessage disableStaff (@RequestBody DisableStaffDTO disableStaffDTO){
+       return authenticationService.disableStaffByAdmin(disableStaffDTO.getStaffId());
     }
 
 }

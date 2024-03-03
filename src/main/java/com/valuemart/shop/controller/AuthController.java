@@ -30,6 +30,17 @@ public class AuthController {
         return authenticationService.login(loginForm);
     }
 
+
+    @PostMapping("/super/login")
+    public LoginResponseModel superLogin(@Valid @RequestBody CustomerLoginDTO loginForm) {
+        return authenticationService.login(loginForm);
+    }
+
+    @PostMapping("/staff/login")
+    public LoginResponseModel staffLogin(@Valid @RequestBody CustomerLoginDTO loginForm) {
+        return authenticationService.login(loginForm);
+    }
+
     @PostMapping("/signup")
     public ResponseMessage customerSignUp(@Valid @RequestBody UserCreate userCreate) {
         log.info("customer signup ".concat( userCreate.toString()));
