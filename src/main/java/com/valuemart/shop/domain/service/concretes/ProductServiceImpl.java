@@ -62,6 +62,7 @@ public class ProductServiceImpl implements ProductsService {
         Product product = Product.fromModel(dto);
 
         if (productRepository.existsProductByNameIgnoreCaseAndDeletedFalse(dto.getName())){
+            System.out.println("already exists");
             throw new BadRequestException("Product "+ dto.getName() + " already exists");
         }
 
@@ -551,12 +552,12 @@ public class ProductServiceImpl implements ProductsService {
 
             if (!cellValue.isEmpty()) {
                 try {
-                    productDTO.setSeason(Seasons.valueOf(cellValue));
+                    productDTO.setSeason(Seasons.valueOf(cellValue).name());
                 } catch (IllegalArgumentException e) {
-                    productDTO.setSeason(null); // Setting to null if the value is invalid
+                    productDTO.setSeason(Seasons.NONE.name());
                 }
             } else {
-                productDTO.setSeason(null); // Set to null if the cell is empty
+                productDTO.setSeason(Seasons.NONE.name());
             }
             log.info(productDTO.toString());
             return productDTO;

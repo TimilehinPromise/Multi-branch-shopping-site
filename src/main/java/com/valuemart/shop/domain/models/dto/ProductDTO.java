@@ -40,6 +40,6 @@ public class ProductDTO {
     private boolean availableInBranch2;
     private boolean availableInBranch3;
     private String skuId;
-    private Seasons season;
+    private String season;
 
 }

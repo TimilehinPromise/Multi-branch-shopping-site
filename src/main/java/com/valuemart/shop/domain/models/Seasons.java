@@ -3,7 +3,7 @@ package com.valuemart.shop.domain.models;
 import java.time.LocalDate;
 import java.time.Month;
 public enum Seasons {
-    RAINY, DRY, HARMATTAN;
+    RAINY, DRY, HARMATTAN,NONE;
 
     public static Seasons getCurrentSeason() {
         Month currentMonth = LocalDate.now().getMonth();
@@ -26,7 +26,7 @@ public enum Seasons {
                 return DRY;
             default:
                 // This default case may not be necessary given all months are covered
-                return null;
+                return NONE;
         }
     }
 

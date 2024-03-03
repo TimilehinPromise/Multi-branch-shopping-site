@@ -2,6 +2,7 @@ package com.valuemart.shop.persistence.entity;
 
 import com.valuemart.shop.domain.ProductImageModel;
 import com.valuemart.shop.domain.models.ProductModel;
+import com.valuemart.shop.domain.models.Seasons;
 import com.valuemart.shop.domain.models.dto.ProductDTO;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -109,9 +110,21 @@ public class Product extends BasePersistentEntity implements ToModel {
                 .price(dto.getPrice())
                 .enabled(dto.isEnabled())
                 .deleted(false)
-                .season(dto.getSeason() != null ? dto.getSeason().name() : null)
+                .season(fromString(dto.getSeason()))
                 .build();
     }
+
+    public static String fromString(String seasonStr) {
+        if (seasonStr == null || seasonStr.isEmpty()) {
+            return Seasons.NONE.name(); //
+        }
+        try {
+            return Seasons.valueOf(seasonStr.toUpperCase()).name();
+        } catch (IllegalArgumentException e) {
+            return null; // or handle invalid values appropriately
+        }
+    }
+
 
 
     @Override
