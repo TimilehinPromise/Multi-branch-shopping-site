@@ -230,7 +230,7 @@ public class ProductServiceImpl implements ProductsService {
 
         if (related.equalsIgnoreCase(RelatedBy.BRAND.getRelatedByName())) {
             System.out.println("search by brand");
-            products = productRepository.findAllByBrandAndDeletedFalseAndSkuIdNot(keyword.toLowerCase(),productSku);
+            products = productRepository.findAllByBrandIgnoreCaseAndDeletedFalseAndSkuIdNot(keyword.toLowerCase(),productSku);
         } else if (related.equalsIgnoreCase(RelatedBy.SUBCATEGORY.getRelatedByName())) {
             System.out.println("search by subcategory");
             products = productRepository.findAllByBusinessSubcategoryIdAndDeletedFalseAndSkuIdNot(Long.valueOf(keyword),productSku);

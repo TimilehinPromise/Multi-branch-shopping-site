@@ -35,7 +35,7 @@ public interface ProductRepository extends JpaRepository<Product,Long>, JpaSpeci
     Optional<Product> findFirstByNameAndDeletedFalse(String name);
 
 
-    List<Product> findAllByBrandAndDeletedFalseAndSkuIdNot(String brand,String skuId);
+    List<Product> findAllByBrandIgnoreCaseAndDeletedFalseAndSkuIdNot(String brand,String skuId);
 
     List<Product> findAllBySeasonAndDeletedFalse(String season);
 
