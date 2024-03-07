@@ -3,8 +3,10 @@ package com.valuemart.shop.domain.service.concretes;
 import com.valuemart.shop.domain.models.AddressModel;
 import com.valuemart.shop.domain.models.ChargeModel;
 import com.valuemart.shop.domain.models.OrderModel;
+import com.valuemart.shop.domain.models.enums.OrderStatus;
 import com.valuemart.shop.domain.service.abstracts.*;
 import com.valuemart.shop.domain.util.PaymentUtils;
+import com.valuemart.shop.exception.BadRequestException;
 import com.valuemart.shop.persistence.entity.Payment;
 import com.valuemart.shop.persistence.entity.PaymentStatus;
 import com.valuemart.shop.persistence.entity.User;
@@ -44,6 +46,8 @@ public class PaymentServiceImpl implements PaymentService {
         System.out.println(reference);
 
         OrderModel model = orderService.getOrder(Long.valueOf(user.getBranchId()),user);
+
+        if (model.getStatus().equals(OrderStatus.IN_PROGRESS) || model.getStatus().equals(OrderStatus.IN_PROGRESS_BUT_DELAYED)){
         System.out.println(model);
         orderService.addDeliveryAmountToOrder(deliveryAmount, model.getOrderId());
 
@@ -60,6 +64,10 @@ public class PaymentServiceImpl implements PaymentService {
         ChargeModel chargeModel = paymentProcessor.initiatePayment(model,user,payment);
         System.out.println(chargeModel);
         return chargeModel;
+        }
+        else {
+            throw new BadRequestException("Order not in right status");
+        }
     }
 
 }

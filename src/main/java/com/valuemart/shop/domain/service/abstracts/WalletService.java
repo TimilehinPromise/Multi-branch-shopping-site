@@ -13,5 +13,7 @@ public interface WalletService {
 
     boolean meetCriteria(User user);
 
+    void updateWallet(Wallet wallet);
+
     void addToWallet(Wallet wallet);
 }

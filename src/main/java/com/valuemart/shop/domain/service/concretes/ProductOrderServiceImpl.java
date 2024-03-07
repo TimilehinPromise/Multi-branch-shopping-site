@@ -8,8 +8,10 @@ import com.valuemart.shop.domain.ResponseMessage;
 import com.valuemart.shop.domain.models.AddressModel;
 import com.valuemart.shop.domain.models.CartModel;
 import com.valuemart.shop.domain.models.OrderModel;
+import com.valuemart.shop.domain.models.dto.ThresholdDTO;
 import com.valuemart.shop.domain.models.enums.OrderStatus;
 import com.valuemart.shop.domain.service.abstracts.*;
+import com.valuemart.shop.exception.NotFoundException;
 import com.valuemart.shop.persistence.entity.Orders;
 import com.valuemart.shop.persistence.entity.User;
 import com.valuemart.shop.persistence.entity.Wallet;
@@ -21,6 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.TimeZone;
 
 @Slf4j
@@ -36,6 +41,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     private final WalletService walletService;
     private final WalletRepository walletRepository;
     private final EmailService emailService;
+    private final ThresholdService thresholdService;
     private static final BigDecimal THRESHOLD = BigDecimal.valueOf(1000.00);
 
 
@@ -56,10 +62,12 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         Wallet wallet = walletService.getOrCreateCoinWalletIfNotExist(user);
         log.info(String.valueOf(model.getTotalCost()));
         log.info(String.valueOf(THRESHOLD));
-        if (model.getTotalCost().compareTo(THRESHOLD) == 1){
-          wallet.setCount(wallet.getCount()+ 1);
-         walletService.addToWallet(wallet);
-         walletRepository.save(wallet);
+
+        ThresholdDTO threshold = thresholdService.getThresholdByValueOrNearestBelow(model.getTotalCost());
+        if (Objects.nonNull(threshold)){
+            wallet.setCount(wallet.getCount()+ 1);
+            wallet.setAmount(wallet.getAmount().add(threshold.getMonetaryAmount()));
+            walletService.updateWallet(wallet);
         }
 
         String details ="";
@@ -120,10 +128,14 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     }
 
     @Override
-    public OrderModel getOrder(Long branchId, User user){
-        OrderModel model = ordersRepository.findFirstByUserIdAndStatusAndBranchIdOrderByCreatedAtDesc(user.getId(), OrderStatus.PENDING,branchId).map(Orders::toModel).orElseThrow( );
+    public OrderModel getOrder(Long branchId, User user) {
+        List<OrderStatus> statuses = Arrays.asList(OrderStatus.IN_PROGRESS, OrderStatus.IN_PROGRESS_BUT_DELAYED);
+        OrderModel model = ordersRepository.findFirstByUserIdAndStatusInAndBranchIdOrderByCreatedAtDesc(user.getId(), statuses, branchId)
+                .map(Orders::toModel)
+                .orElseThrow(() -> new NotFoundException("Order not found"));
         Wallet wallet = walletService.getWallet(user);
-        model.setDiscountedAmount(model.getAmount().subtract(wallet.getAmount()));
+        BigDecimal walletAmount = wallet.getAmount() != null ? wallet.getAmount() : BigDecimal.ZERO;
+        model.setDiscountedAmount(model.getAmount().subtract(walletAmount));
         return model;
     }
 

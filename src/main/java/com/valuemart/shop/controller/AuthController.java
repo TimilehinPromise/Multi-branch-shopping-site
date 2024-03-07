@@ -57,5 +57,12 @@ public class AuthController {
         return  userService.resetPassword(password);
     }
 
+    @PostMapping("/admin/signup")
+    public ResponseMessage adminSignUp(@Valid @RequestBody UserCreate userCreate) {
+        log.info("admin signup ".concat( userCreate.toString()));
+        return authenticationService.adminSignUp(userCreate);
+    }
+
+
 
 }

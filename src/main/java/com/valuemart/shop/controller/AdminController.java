@@ -1,13 +1,9 @@
 package com.valuemart.shop.controller;
 
-import com.valuemart.shop.domain.ResponseMessage;
-import com.valuemart.shop.domain.models.dto.AdminLogisticDto;
 import com.valuemart.shop.domain.service.abstracts.DeliveryService;
+import com.valuemart.shop.domain.service.abstracts.ThresholdService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -19,13 +15,12 @@ public class AdminController {
 
     private final DeliveryService deliveryService;
 
+    private final ThresholdService thresholdService;
 
-    public AdminController(DeliveryService deliveryService) {
+
+    public AdminController(DeliveryService deliveryService, ThresholdService thresholdService) {
         this.deliveryService = deliveryService;
+        this.thresholdService = thresholdService;
     }
 
-    @PostMapping("/logistics")
-    public ResponseMessage addLogisticsPricing(@RequestBody AdminLogisticDto dto){
-       return deliveryService.addOrUpdateDeliveryAreas(dto);
-    }
 }

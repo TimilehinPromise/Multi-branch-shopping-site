@@ -74,14 +74,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public ResponseMessage signUp(UserCreate userCreate){
-        if (userCreate.getRole().name().equals("ROLE_ADMIN")){
-            return createAdmin(userCreate);}
-//        } else if (userCreate.getRole().name().equals("ROLE_STAFF")) {
-//            return createStaff(userCreate);
-         else if (userCreate.getRole().name().equals("ROLE_CUSTOMER")) {
             return createCustomer(userCreate);
-        }
-        else throw new BadRequestException("User role not Found");
+    }
+
+    @Override
+    public ResponseMessage adminSignUp(UserCreate userCreate){
+            return createAdmin(userCreate);
     }
 
 

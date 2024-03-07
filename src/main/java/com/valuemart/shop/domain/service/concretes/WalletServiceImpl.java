@@ -70,6 +70,11 @@ public class WalletServiceImpl implements WalletService {
 //    }
 
     @Override
+    public void updateWallet(Wallet wallet){
+        walletRepository.save(wallet);
+    }
+
+    @Override
     public void addToWallet(Wallet wallet){
         log.info(wallet.toString());
       Optional<Loyalty> loyalty = loyaltyRepository.findFirstByCount(wallet.getCount());
