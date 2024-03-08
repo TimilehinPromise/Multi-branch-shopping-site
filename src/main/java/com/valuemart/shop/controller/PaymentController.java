@@ -25,9 +25,9 @@ public class PaymentController {
 
 
     @PostMapping("")
-    private ChargeModel initiatePayment(@RequestBody PaymentDTO paymentDTO){
+    private ChargeModel initiatePayment(){
         System.out.println("initiate payment");
         User user = getLoggedInUser();
-       return paymentService.createPayment(user,paymentDTO.getAddressId());
+       return paymentService.createPayment(user);
     }
 }

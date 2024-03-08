@@ -1,6 +1,7 @@
 package com.valuemart.shop.controller;
 
 import com.valuemart.shop.domain.ResponseMessage;
+import com.valuemart.shop.domain.models.DiscountResponse;
 import com.valuemart.shop.domain.models.OrderModel;
 import com.valuemart.shop.domain.models.dto.OrderDTO;
 import com.valuemart.shop.domain.service.abstracts.ProductOrderService;
@@ -25,12 +26,18 @@ public class OrderCustomerController {
     @PostMapping("/checkout")
     private ResponseMessage checkout(@RequestBody OrderDTO orderDTO){
         User user = UserUtils.getLoggedInUser();
-       return productOrderService.convertCartToOrder(user,orderDTO.getAddressId(), orderDTO.getMessage());
+       return productOrderService.convertCartToOrder(user,orderDTO.getAddressId(), orderDTO.getMessage(),orderDTO.getUseWallet());
     }
 
     @GetMapping("/{orderId}/{branchId}")
     private OrderModel getOrder (@PathVariable Long orderId, @PathVariable Long branchId){
         User user = UserUtils.getLoggedInUser();
        return productOrderService.getOrder(orderId,branchId,user);
+    }
+
+    @PostMapping("/discountCheck")
+    private DiscountResponse discountCheck (){
+        User user = UserUtils.getLoggedInUser();
+       return productOrderService.applyDiscount(user);
     }
 }

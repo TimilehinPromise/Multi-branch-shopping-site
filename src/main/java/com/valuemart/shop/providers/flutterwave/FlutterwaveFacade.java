@@ -34,7 +34,7 @@ public class FlutterwaveFacade extends HttpApiClient implements PaymentProcessor
     private FlwChargeRequest buildFlRequest(OrderModel model, User user, Payment payment){
         return FlwChargeRequest.builder()
                 .currency("NGN")
-                .amount(model.getAmount())
+                .amount(model.getDiscountedAmount().compareTo(model.getAmount()) < 0 ? model.getDiscountedAmount() :model.getAmount())
                 .customer(FlwCustomer.builder()
                         .email("ncsksdsd@gmail.com")
                         .name(user.getFirstName() + " " + user.getLastName())

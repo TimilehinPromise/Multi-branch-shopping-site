@@ -1,6 +1,7 @@
 package com.valuemart.shop.domain.service.abstracts;
 
 import com.valuemart.shop.domain.ResponseMessage;
+import com.valuemart.shop.domain.models.DiscountResponse;
 import com.valuemart.shop.domain.models.OrderModel;
 import com.valuemart.shop.domain.models.enums.OrderStatus;
 import com.valuemart.shop.persistence.entity.User;
@@ -8,7 +9,9 @@ import com.valuemart.shop.persistence.entity.User;
 import java.math.BigDecimal;
 
 public interface ProductOrderService {
-    ResponseMessage convertCartToOrder(User user, Long addressId, String message);
+    ResponseMessage convertCartToOrder(User user, Long addressId, String message,Boolean useWallet);
+
+    DiscountResponse applyDiscount(User user);
 
     void addDeliveryAmountToOrder(BigDecimal deliveryAmount, Long orderId);
 

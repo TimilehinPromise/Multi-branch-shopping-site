@@ -3,6 +3,7 @@ package com.valuemart.shop.persistence.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "payment")
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@ToString
 //@JsonIgnoreProperties({"lastupdatedAt", "paymentReference", "providerExtraInfo"})
 public class Payment extends BasePersistentEntity{
 

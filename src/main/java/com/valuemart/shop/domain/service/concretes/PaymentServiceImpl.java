@@ -1,6 +1,5 @@
 package com.valuemart.shop.domain.service.concretes;
 
-import com.valuemart.shop.domain.models.AddressModel;
 import com.valuemart.shop.domain.models.ChargeModel;
 import com.valuemart.shop.domain.models.OrderModel;
 import com.valuemart.shop.domain.models.enums.OrderStatus;
@@ -15,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -28,34 +25,26 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentProcessorFactory factory;
 
-    private final UserService userService;
-
-    private final DeliveryService deliveryService;
 
     @Override
-    public ChargeModel createPayment( User user,Long addressId){
+    public ChargeModel createPayment(User user){
         System.out.println("create payment method");
-        AddressModel addressModel = userService.getAddressByAddressId(addressId, user.getId());
-        BigDecimal deliveryAmount =  deliveryService.getDeliveryPriceByArea(addressModel.getCity());
-        System.out.println(deliveryAmount);
 
         Payment.PaymentReference reference = new Payment.PaymentReference();
         reference.setUserId(user.getId().toString());
         reference.setReferenceId(PaymentUtils.generateTransRef());
 
-        System.out.println(reference);
 
         OrderModel model = orderService.getOrder(Long.valueOf(user.getBranchId()),user);
 
         if (model.getStatus().equals(OrderStatus.IN_PROGRESS) || model.getStatus().equals(OrderStatus.IN_PROGRESS_BUT_DELAYED)){
         System.out.println(model);
-        orderService.addDeliveryAmountToOrder(deliveryAmount, model.getOrderId());
 
         final PaymentProcessor paymentProcessor = factory.getProcessor("Flutterwave");
 
         Payment payment = new Payment();
         payment.setProvider(paymentProcessor.getName());
-        payment.setAmount(model.getAmount().add(model.getDeliveryAmount()));
+        payment.setAmount(model.getAmount());
         payment.setPaymentReference(reference);
         payment.setStatus(PaymentStatus.CREATED);
         paymentRepository.save(payment);
