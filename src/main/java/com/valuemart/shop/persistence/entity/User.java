@@ -150,6 +150,7 @@ public class User extends BasePersistentEntity implements UserDetails, ToModel {
                 .emailVerified(emailVerified)
                 .royaltyCode(royaltyCode)
                 .branchId(branchId)
+                .userId(id)
                 .build();
     }
 }

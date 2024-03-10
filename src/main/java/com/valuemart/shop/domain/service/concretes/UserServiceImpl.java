@@ -204,6 +204,11 @@ public class UserServiceImpl implements UserService {
         return savedEntity;
     }
 
+    @Override
+    public UserModel getUserByRoyaltyCode(String code){
+          return userRepository.findByRoyaltyCode(code).map(User::toModel).get();
+    }
+
 
 
 

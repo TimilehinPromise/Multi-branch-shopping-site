@@ -9,7 +9,7 @@ import javax.persistence.Column;
 @Builder
 public class UserModel {
 
-
+    private Long userId;
     private String firstname;
     private String lastname;
     private String email;

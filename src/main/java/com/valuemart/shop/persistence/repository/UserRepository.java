@@ -26,6 +26,8 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     Optional<User>findByEmail(String email);
 
+    Optional<User> findByRoyaltyCode(String code);
+
     List<User> findUsersByDeletedFalse();
 
     List<User>findUsersByEnabledFalse();

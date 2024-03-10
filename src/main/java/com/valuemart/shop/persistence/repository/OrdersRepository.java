@@ -5,6 +5,7 @@ import com.valuemart.shop.persistence.entity.Orders;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface OrdersRepository extends JpaRepository<Orders, Long> {
@@ -14,4 +15,6 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
     Optional<Orders> findFirstByUserIdAndStatusAndBranchIdOrderByCreatedAtDesc(Long userId, OrderStatus status,Long branchId);
 
     Optional<Orders> findFirstByUserIdAndStatusInAndBranchIdOrderByCreatedAtDesc(Long userId, Collection<OrderStatus> statuses, Long branchId);
+
+    List<Orders> findAllByStatusAndBranchIdOrderByCreatedAtDesc(OrderStatus status, Long branchId);
 }

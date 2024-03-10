@@ -49,6 +49,7 @@ public class Orders extends BasePersistentEntity implements ToModel{
     private BigDecimal deliveryAmount;
     private String shopResponse;
     private Long addressId;
+    private String paymentLink;
 
     @Override
     public OrderModel toModel() {

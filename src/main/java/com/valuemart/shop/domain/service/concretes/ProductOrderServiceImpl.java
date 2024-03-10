@@ -4,19 +4,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.valuemart.shop.domain.QrCodeResponse;
 import com.valuemart.shop.domain.ResponseMessage;
-import com.valuemart.shop.domain.models.AddressModel;
-import com.valuemart.shop.domain.models.CartModel;
-import com.valuemart.shop.domain.models.DiscountResponse;
-import com.valuemart.shop.domain.models.OrderModel;
+import com.valuemart.shop.domain.models.*;
 import com.valuemart.shop.domain.models.dto.ThresholdDTO;
 import com.valuemart.shop.domain.models.enums.OrderStatus;
 import com.valuemart.shop.domain.service.abstracts.*;
+import com.valuemart.shop.domain.util.PaymentUtils;
+import com.valuemart.shop.exception.BadRequestException;
 import com.valuemart.shop.exception.NotFoundException;
-import com.valuemart.shop.persistence.entity.Orders;
-import com.valuemart.shop.persistence.entity.User;
-import com.valuemart.shop.persistence.entity.Wallet;
+import com.valuemart.shop.persistence.entity.*;
 import com.valuemart.shop.persistence.repository.OrdersRepository;
+import com.valuemart.shop.persistence.repository.PaymentRepository;
 import com.valuemart.shop.persistence.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +43,9 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     private final EmailService emailService;
     private final ThresholdService thresholdService;
     private final DeliveryService deliveryService;
+    private final PaymentRepository paymentRepository;
+
+    private final PaymentProcessorFactory factory;
 
     private static final BigDecimal THRESHOLD = BigDecimal.valueOf(1000.00);
 
@@ -212,6 +214,17 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         return model;
     }
 
+    @Override
+    public List<OrderModel> getAllOrdersByStaff(String status, Long branchId){
+        OrderStatus orderStatus = OrderStatus.valueOf(status);
+        System.out.println(orderStatus.name());
+        if (Objects.nonNull(status)) {
+            return ordersRepository.findAllByStatusAndBranchIdOrderByCreatedAtDesc(orderStatus, branchId).stream().map(Orders::toModel).toList();
+        }
+        else
+            return ordersRepository.findAllByStatusAndBranchIdOrderByCreatedAtDesc(OrderStatus.PENDING,branchId).stream().map(Orders::toModel).toList();
+    }
+
     public Orders getOrderInternal(Long orderId, Long branchId, User user){
         Orders model = ordersRepository.findFirstByIdAndBranchId(orderId,branchId).orElseThrow( );
         Wallet wallet = walletService.getWallet(user);
@@ -236,12 +249,62 @@ public class ProductOrderServiceImpl implements ProductOrderService {
       Orders order = getOrderInternal(orderId, branchId,user);
         order.setStatus(status);
         order.setShopResponse(message);
+       String link =  createPayment(user).getLink();
+       order.setPaymentLink(link);
       OrderModel orderModel =  ordersRepository.save(order).toModel();
         emailService.orderResponseNotification(user,"emptylinkfornow.com",message,orderModel.getDetails());
+
         return ResponseMessage.builder().message("Order has been set to " + status.name()).build();
     }
 
+
+    public ChargeModel createPayment(User user){
+        System.out.println("create payment method");
+
+        Payment.PaymentReference reference = new Payment.PaymentReference();
+        reference.setUserId(user.getId().toString());
+        reference.setReferenceId(PaymentUtils.generateTransRef());
+
+
+        OrderModel model = getOrder(Long.valueOf(user.getBranchId()),user);
+
+        if (model.getStatus().equals(OrderStatus.IN_PROGRESS) || model.getStatus().equals(OrderStatus.IN_PROGRESS_BUT_DELAYED)){
+            System.out.println(model);
+
+            final PaymentProcessor paymentProcessor = factory.getProcessor("Flutterwave");
+
+            Payment payment = new Payment();
+            payment.setProvider(paymentProcessor.getName());
+            payment.setAmount(model.getDiscountedAmount().compareTo(model.getAmount()) < 0 ? model.getDiscountedAmount() :model.getAmount());
+            payment.setPaymentReference(reference);
+            payment.setStatus(PaymentStatus.CREATED);
+            paymentRepository.save(payment);
+            System.out.println(payment);
+
+            ChargeModel chargeModel = paymentProcessor.initiatePayment(model,user,payment);
+            System.out.println(chargeModel);
+            return chargeModel;
+        }
+        else {
+            throw new BadRequestException("Order not in right status");
+        }
+    }
+
+
     private String buildAddress(AddressModel addressModel){
         return addressModel.getStreet() + " " + addressModel.getCity() + " (" + addressModel.getLandmark() + ")";
+    }
+
+
+    @Override
+    public QrCodeResponse qrCodeResponse(String code){
+        UserModel userModel =userService.getUserByRoyaltyCode(code);
+
+        Wallet wallet =  walletService.getWallet(userModel);
+
+        return QrCodeResponse.builder()
+                .amount(wallet.getAmount())
+                .model(userModel)
+                .build();
     }
 }

@@ -34,4 +34,6 @@ public interface UserService {
     ResponseMessage resetPassword(NewPassword newPassword);
 
     User changePassword(Long userId, PasswordChange passwordChange);
+
+    UserModel getUserByRoyaltyCode(String code);
 }
