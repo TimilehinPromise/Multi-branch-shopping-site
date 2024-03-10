@@ -44,7 +44,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         Payment payment = new Payment();
         payment.setProvider(paymentProcessor.getName());
-        payment.setAmount(model.getAmount());
+        payment.setAmount(model.getDiscountedAmount().compareTo(model.getAmount()) < 0 ? model.getDiscountedAmount() :model.getAmount());
         payment.setPaymentReference(reference);
         payment.setStatus(PaymentStatus.CREATED);
         paymentRepository.save(payment);

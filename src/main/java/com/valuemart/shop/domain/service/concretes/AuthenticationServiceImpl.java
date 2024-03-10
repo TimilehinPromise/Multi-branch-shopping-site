@@ -7,6 +7,7 @@ import com.valuemart.shop.domain.models.RoleType;
 import com.valuemart.shop.domain.models.UserCreate;
 import com.valuemart.shop.domain.service.abstracts.AuthenticationService;
 import com.valuemart.shop.domain.service.abstracts.EmailService;
+import com.valuemart.shop.domain.service.abstracts.QRCodeService;
 import com.valuemart.shop.domain.util.UserUtils;
 import com.valuemart.shop.exception.BadRequestException;
 import com.valuemart.shop.exception.ValueMartRuntimeException;
@@ -22,6 +23,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -49,6 +54,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final TokenAuthenticationService tokenService;
 
     private final EmailService emailService;
+
+    private final QRCodeService qrCodeService;
 
     @Override
     public LoginResponseModel login(CustomerLoginDTO loginForm) {
@@ -127,6 +134,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .build());
                 String customerRoyaltyCode = UserUtils.generateCustomerCode(savedCustomer.getFirstName().concat(" ").concat(savedCustomer.getLastName()),savedCustomer.getId(), LocalDateTime.now());
                 savedCustomer.setRoyaltyCode(customerRoyaltyCode);
+                savedCustomer.setRoyaltyQr(qrCodeService.generateQRCodeImageAndUpload(customerRoyaltyCode));
                 userRepository.save(savedCustomer);
 
                 emailService.sendCustomerCreationEmail(savedCustomer);
@@ -234,6 +242,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 //            throw  ValueMartException(e.getMessage(), UNAUTHORIZED);
         }
     }
+
+
 
     private ValueMartException accountLockedException(){
         return new ValueMartException(ACCOUNT_LOCKOUT);
