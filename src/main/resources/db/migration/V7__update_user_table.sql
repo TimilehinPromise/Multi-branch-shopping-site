@@ -1,0 +1,2 @@
+ALTER TABLE users
+    ADD COLUMN royalty_qr VARCHAR(255) UNIQUE;

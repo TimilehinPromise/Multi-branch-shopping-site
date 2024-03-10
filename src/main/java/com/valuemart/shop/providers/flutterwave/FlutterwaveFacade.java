@@ -36,7 +36,7 @@ public class FlutterwaveFacade extends HttpApiClient implements PaymentProcessor
                 .currency("NGN")
                 .amount(model.getDiscountedAmount().compareTo(model.getAmount()) < 0 ? model.getDiscountedAmount() :model.getAmount())
                 .customer(FlwCustomer.builder()
-                        .email("ncsksdsd@gmail.com")
+                        .email(user.getEmail())
                         .name(user.getFirstName() + " " + user.getLastName())
                 .build())
                 .redirectUrl("https://webhook.site/96b8b2ad-c9bc-4604-8c8c-d69f7f3a7123")

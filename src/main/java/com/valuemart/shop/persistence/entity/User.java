@@ -38,6 +38,7 @@ public class User extends BasePersistentEntity implements UserDetails, ToModel {
     private String password;
     @Column(nullable = false)
     private String royaltyCode;
+    private String royaltyQr;
     private int branchId;
     @Column(nullable = false)
     private String email;

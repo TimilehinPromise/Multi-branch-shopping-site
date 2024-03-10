@@ -5,6 +5,7 @@ package com.valuemart.shop.config;
 //import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.valuemart.shop.exception.AsyncExceptionHandler;
+import com.valuemart.shop.providers.cloudinary.CloudinaryConfig;
 import com.valuemart.shop.providers.flutterwave.FlutterwaveConfig;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
@@ -40,6 +41,15 @@ public class AppConfig {
 
     @Value("${flutterwave.api.transfer.callback}")
     private String flutterwaveTransactionCallbackUrl;
+
+    @Value("${cloudinary.name}")
+    private String name;
+
+    @Value("${cloudinary.key}")
+    private String cloudinaryKey;
+
+    @Value("${cloudinary.secret}")
+    private String secret;
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
@@ -112,6 +122,16 @@ public class AppConfig {
                 .paymentReason("ValueMart Payment")
                 .transactionCallBackUrl(flutterwaveTransactionCallbackUrl)
                 .build();
+    }
+
+    @Bean
+    public CloudinaryConfig cloudinaryConfig(){
+      return   CloudinaryConfig.builder()
+                .secret(secret)
+                .name(name)
+                .key(cloudinaryKey)
+                .build();
+
     }
 
 
