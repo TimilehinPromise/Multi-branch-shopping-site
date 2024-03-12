@@ -75,14 +75,19 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         log.info(String.valueOf(amount));
         BigDecimal walletAmount = wallet.getAmount();
 
-        DiscountResponse  response = new DiscountResponse();
+        DiscountResponse  response = null;
         if (useWallet){
               response = applyDiscountInternal(model.getTotalCost(), walletAmount);
         }
 
-        if (response.getSuccessful()){
+        if (Objects.nonNull(response)) {
+            if(response.getSuccessful()){
             amount = response.getAmount().add(deliveryAmount);
             model.setTotalCost(amount);
+        }}
+
+        else {
+            model.setTotalCost(model.getTotalCost().add(deliveryAmount));
         }
 
         ThresholdDTO threshold = thresholdService.getThresholdByValueOrNearestBelow(model.getTotalCost());
