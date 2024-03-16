@@ -1,6 +1,5 @@
 package com.valuemart.shop.exception;
 
-//import com.valueplus.paystack.model.ResponseModel;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -42,14 +41,6 @@ public class CentralizedExceptionHandler extends ResponseEntityExceptionHandler 
         return new ResponseEntity<>(apiError, apiError.getStatus());
     }
 
-//    @ExceptionHandler({HttpClientErrorException.class})
-//    public ResponseEntity<Object> handleHttpClientErrorException(HttpClientErrorException ex) {
-//        String arrayIndex = ex.getRawStatusCode() + " " + ex.getStatusText().concat(":");
-//        Object apiError = parseError(arrayIndex, ex.getMessage());
-//
-//        return new ResponseEntity<>(apiError, HttpStatus.valueOf(ex.getRawStatusCode()));
-//    }
-
     @ExceptionHandler({BadRequestException.class})
     public ResponseEntity<Object> handleBadRequestException(BadRequestException ex) {
         var apiError = new ApiError(BAD_REQUEST, ex.getMessage(), ex.getMessage());
@@ -61,19 +52,6 @@ public class CentralizedExceptionHandler extends ResponseEntityExceptionHandler 
         var apiError = new ApiError(ex.getHttpStatus(), ex.getMessage(), ex.getMessage());
         return new ResponseEntity<>(apiError, ex.getHttpStatus());
     }
-
-//    private Object parseError(String arrayIndex, String error) {
-//        try {
-//            error = error.replace(arrayIndex, "").trim();
-//
-//            TypeReference<List<ResponseModel>> reference = new TypeReference<>() {
-//            };
-//            return new ObjectMapper().readValue(error, reference);
-//        } catch (JsonProcessingException ignored) {
-//
-//        }
-//        return error;
-//    }
 
     @ExceptionHandler({NotFoundException.class})
     public ResponseEntity<Object> handleNotFoundException(Exception ex) {

@@ -10,6 +10,8 @@ import com.valuemart.shop.persistence.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -39,5 +41,12 @@ public class OrderCustomerController {
     private DiscountResponse discountCheck (){
         User user = UserUtils.getLoggedInUser();
        return productOrderService.applyDiscount(user);
+    }
+
+
+    @GetMapping("/all")
+    private List<OrderModel> getAllOrders(){
+        User user = UserUtils.getLoggedInUser();
+        return productOrderService.getOrderByCustomer(user);
     }
 }

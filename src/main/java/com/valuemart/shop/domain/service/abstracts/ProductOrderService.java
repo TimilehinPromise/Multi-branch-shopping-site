@@ -17,6 +17,8 @@ public interface ProductOrderService {
 
     void addDeliveryAmountToOrder(BigDecimal deliveryAmount, Long orderId);
 
+    List<OrderModel> getOrderByCustomer(User user);
+
     OrderModel getOrder(Long orderId, Long branchId, User user);
 
     List<OrderModel> getAllOrdersByStaff(String status, Long branchId);

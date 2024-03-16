@@ -211,6 +211,13 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         return ordersRepository.findFirstByIdAndBranchId(orderId,branchId).map(Orders::toModel).orElseThrow( );
     }
 
+
+    @Override
+    public List<OrderModel> getOrderByCustomer(User user){
+        System.out.println(user.getId());
+        return ordersRepository.findAllByUserId(user.getId()).stream().map(Orders::toModel).toList();
+    }
+
     @Override
     public OrderModel getOrder(Long orderId, Long branchId, User user){
         OrderModel model = ordersRepository.findFirstByIdAndBranchId(orderId,branchId).map(Orders::toModel).orElseThrow( );
