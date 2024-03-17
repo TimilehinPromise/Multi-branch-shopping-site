@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.valuemart.shop.domain.QrCodeResponse;
 import com.valuemart.shop.domain.ResponseMessage;
 import com.valuemart.shop.domain.models.*;
+import com.valuemart.shop.domain.models.dto.RedirectDTO;
 import com.valuemart.shop.domain.models.dto.ThresholdDTO;
 import com.valuemart.shop.domain.models.enums.OrderStatus;
 import com.valuemart.shop.domain.service.abstracts.*;
@@ -17,16 +18,14 @@ import com.valuemart.shop.persistence.entity.*;
 import com.valuemart.shop.persistence.repository.OrdersRepository;
 import com.valuemart.shop.persistence.repository.PaymentRepository;
 import com.valuemart.shop.persistence.repository.WalletRepository;
+import com.valuemart.shop.providers.flutterwave.FlwTransactionResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.TimeZone;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -69,8 +68,8 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         AddressModel addressModel = userService.getAddressByAddressId(addressId, user.getId());
         BigDecimal deliveryAmount =  deliveryService.getDeliveryPriceByArea(addressModel.getCity());
 
-        BigDecimal originalAmount = model.getTotalCost();
-        BigDecimal amount = model.getTotalCost().add(deliveryAmount);
+        BigDecimal originalAmount = model.getTotalCost().add(deliveryAmount);
+        BigDecimal amount = model.getTotalCost();
 
         log.info(String.valueOf(amount));
         BigDecimal walletAmount = wallet.getAmount();
@@ -89,13 +88,22 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         else {
             model.setTotalCost(model.getTotalCost().add(deliveryAmount));
         }
+        if (useWallet){
+            wallet.setAmount(BigDecimal.ZERO);
+            walletService.updateWallet(wallet);
+        }
 
         ThresholdDTO threshold = thresholdService.getThresholdByValueOrNearestBelow(model.getTotalCost());
         if (Objects.nonNull(threshold)){
             wallet.setCount(wallet.getCount()+ 1);
-            wallet.setAmount(wallet.getAmount().add(threshold.getMonetaryAmount()));
+            if (useWallet){
+                wallet.setAmount(threshold.getMonetaryAmount());
+            }
+            else {
+            wallet.setAmount(wallet.getAmount().add(threshold.getMonetaryAmount()));}
             walletService.updateWallet(wallet);
         }
+
 
         String details ="";
         try {
@@ -247,13 +255,9 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     @Override
     public OrderModel getOrder(Long branchId, User user) {
         List<OrderStatus> statuses = Arrays.asList(OrderStatus.IN_PROGRESS, OrderStatus.IN_PROGRESS_BUT_DELAYED);
-        OrderModel model = ordersRepository.findFirstByUserIdAndStatusInAndBranchIdOrderByCreatedAtDesc(user.getId(), statuses, branchId)
+        return ordersRepository.findFirstByUserIdAndStatusInAndBranchIdOrderByCreatedAtDesc(user.getId(), statuses, branchId)
                 .map(Orders::toModel)
                 .orElseThrow(() -> new NotFoundException("Order not found"));
-        Wallet wallet = walletService.getWallet(user);
-        BigDecimal walletAmount = wallet.getAmount() != null ? wallet.getAmount() : BigDecimal.ZERO;
-        model.setDiscountedAmount(model.getAmount().subtract(walletAmount));
-        return model;
     }
 
     @Override
@@ -264,8 +268,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
        String link =  createPayment(user).getLink();
        order.setPaymentLink(link);
       OrderModel orderModel =  ordersRepository.save(order).toModel();
-        emailService.orderResponseNotification(user,"emptylinkfornow.com",message,orderModel.getDetails());
-
+        emailService.orderResponseNotification(user,"emptylinkfornow.com",message,orderModel.getDetails(),link);
         return ResponseMessage.builder().message("Order has been set to " + status.name()).build();
     }
 
@@ -300,6 +303,39 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         else {
             throw new BadRequestException("Order not in right status");
         }
+    }
+
+
+    @Override
+    public RedirectResponse handleRedirect(RedirectDTO dto, User user){
+
+     Payment payment = paymentRepository.findByPaymentReferenceReferenceIdAndStatus(dto.getTransRef(),PaymentStatus.CREATED).orElseThrow(() -> new NotFoundException("Transaction Is Not Found"));
+
+     if (!payment.getPaymentReference().getUserId().equals(String.valueOf(user.getId()))){
+         throw new NotFoundException("Transaction Not Found");
+     }
+        RedirectResponse redirectResponse = new RedirectResponse();
+
+        final PaymentProcessor paymentProcessor = factory.getProcessor("Flutterwave");
+
+        FlwTransactionResponse response = paymentProcessor.tsq(dto.getTransId());
+
+        if (("successful".equals(response.getData().getStatus()) )&& (payment.getAmount().compareTo(response.getData().getAmount()) == 0)){
+            payment.setStatus(PaymentStatus.SUCCESS);
+            payment.setProviderResponse(response.getData().toString());
+            paymentRepository.save(payment);
+            redirectResponse.setMessage("Successful Payment");
+            redirectResponse.setSuccess(true);
+        }
+
+        else {
+            payment.setStatus(PaymentStatus.FAILED);
+            payment.setProviderResponse(response.toString());
+            paymentRepository.save(payment);
+            redirectResponse.setMessage("Payment Not Successful");
+        }
+
+       return redirectResponse;
     }
 
 

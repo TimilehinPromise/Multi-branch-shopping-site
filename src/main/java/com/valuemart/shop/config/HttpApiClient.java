@@ -41,7 +41,7 @@ public abstract class HttpApiClient {
                 method,
                 httpEntity,
                 clazz);
-        log.info(requestEntity.toString());
+        log.info(responseEntity.toString());
 
         log.info(" API {} request to {} is successful",  method.name(), urlPath);
         System.out.println(responseEntity.getBody());

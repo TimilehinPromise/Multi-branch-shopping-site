@@ -39,7 +39,7 @@ public class FlutterwaveFacade extends HttpApiClient implements PaymentProcessor
                         .email(user.getEmail())
                         .name(user.getFirstName() + " " + user.getLastName())
                 .build())
-                .redirectUrl("https://webhook.site/96b8b2ad-c9bc-4604-8c8c-d69f7f3a7123")
+                .redirectUrl("https://valuemartdev-1f65ed2b6656.herokuapp.com/v1/api/payment/check")
                 .transactionRef(payment.getPaymentReference().getReferenceId())
                 .build();
     }
@@ -69,6 +69,20 @@ public class FlutterwaveFacade extends HttpApiClient implements PaymentProcessor
         } else {
             throw new BadRequestException(response.getMessage());
         }
+    }
+
+    @Override
+    public FlwTransactionResponse tsq (String transId) {
+
+        String url = config.getBaseUrl().concat("transactions/").concat(transId).concat(config.getVerifyPaymentUrl());
+
+        var type = new ParameterizedTypeReference<FlwTransactionResponse>() {};
+
+        FlwTransactionResponse response =  sendRequest(HttpMethod.GET,url,null,getHeaders(),type);
+
+
+
+        return response;
     }
 
     public  Map<String, String> getHeaders(){

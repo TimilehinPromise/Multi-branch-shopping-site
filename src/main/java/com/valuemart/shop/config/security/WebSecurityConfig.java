@@ -84,7 +84,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/actuator/metrics",
                         "/actuator/**",
                         "/v1/register",
-                        "/v1/api/auth/**").permitAll()
+                        "/v1/api/auth/**",
+                        "v1/api/payment/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()

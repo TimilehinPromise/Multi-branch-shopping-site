@@ -57,8 +57,8 @@
             text-align: right;
             flex: 0 0 100px; /* Adjust width as needed */
         }
-        .highlighted-message {
-            background-color: #ffeb3b; /* A more vibrant yellow */
+        .highlighted-message, .payment-message {
+            background-color: #ffeb3b; /* A vibrant yellow */
             padding: 15px;
             border-left: 4px solid #ffc107; /* A matching vibrant yellow border */
             font-weight: bold;
@@ -67,6 +67,15 @@
             text-align: center; /* Centered text for emphasis */
             display: block; /* Use block to allow for margins and padding */
             margin-top: 20px; /* Space before the message */
+        }
+        .payment-link {
+            display: inline-block;
+            background-color: #4CAF50; /* Green */
+            color: white;
+            padding: 10px 20px;
+            margin: 20px 0;
+            text-decoration: none;
+            border-radius: 5px;
         }
         .footer {
             text-align: center;
@@ -99,6 +108,10 @@
     <div class="email-body">
         <p class="highlighted-message">$OrderStatusMessage</p>
 
+        <!-- Payment Message and Link -->
+        <p class="payment-message">To complete your purchase, please make a payment by clicking the button below.</p>
+        <a href="$Payment_Link" class="payment-link">Make Payment</a>
+
         <div class="order-summary">
             <h2>Your Order Details:</h2>
             #foreach ($item in $OrderDetails)
@@ -119,5 +132,4 @@
     </div>
 </div>
 </body>
-</html>
 </html>

@@ -29,6 +29,9 @@ public class FlutterwaveConfig {
     @Value("${flutterwave.api.create.url}")
     private final String createPaymentUrl;
 
+    @Value("${flutterwave.api.tsq.url}")
+    private final String verifyPaymentUrl;
+
     public enum Domain {
         TEST("test"), LIVE("live");
 

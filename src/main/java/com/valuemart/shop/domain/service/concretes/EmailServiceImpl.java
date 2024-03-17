@@ -110,14 +110,15 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     @Async
-    public void orderResponseNotification(User user, String link, String message, CartModel cart) {
+    public void orderResponseNotification(User user, String link, String message, CartModel cart,String paymentLink) {
         Template template = velocityEngine.getTemplate("/templates/orderResponseNotification.vm");
         VelocityContext context = new VelocityContext();
         context.put("name", user.getFirstName() + " " + user.getLastName());
         context.put("link", link);
         context.put("Mall_Name", NAME);
         context.put("Year", LocalDateTime.now().getYear());
-        context.put("Message", message);
+        context.put("OrderStatusMessage", message);
+        context.put("Payment_Link",paymentLink);
 
         List<Map<String, Object>> productDetailsList = new ArrayList<>();
 

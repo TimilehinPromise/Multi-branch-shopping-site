@@ -16,7 +16,7 @@ public interface EmailService {
     void passwordResetNotification(User user, String link);
 
     @Async
-    void orderResponseNotification(User user, String link, String message, CartModel cart);
+    void orderResponseNotification(User user, String link, String message, CartModel cart,String paymentLink);
 
     void sendEmailVerification(User user, String link) throws Exception;
 }
