@@ -15,13 +15,13 @@ public interface ProductsService {
 
     ResponseMessage updateProduct(ProductDTO dto);
 
-    Page<ProductModel> getAllProduct(Pageable pageable);
+    List<ProductModel> getAllProduct();
 
-    Page<ProductModel> getAllProductStore(Long branchId, Pageable pageable);
+    List<ProductModel> getAllProductStore(Long branchId);
 
-    Page<ProductModel>  getAllProductByCategory(Long id, Pageable pageable);
+    List<ProductModel>  getAllProductByCategory(Long id);
 
-    Page<ProductModel>  getAllProductBySubCategory(Long id,Pageable pageable);
+    List<ProductModel>  getAllProductBySubCategory(Long id);
 
     ProductModel getProductBySkuId(String skuId);
 

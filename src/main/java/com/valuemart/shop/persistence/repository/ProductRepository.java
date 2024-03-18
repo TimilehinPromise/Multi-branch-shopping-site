@@ -18,13 +18,13 @@ public interface ProductRepository extends JpaRepository<Product,Long>, JpaSpeci
 
     boolean existsProductByNameIgnoreCaseAndDeletedFalse(String name);
 
-    Page<Product> findAllByBusinessCategoryIdAndDeletedFalse(Long categoryId, Pageable pageable);
+    List<Product> findAllByBusinessCategoryIdAndDeletedFalse(Long categoryId);
 
 //    @Query("select p from Product p where p.deleted = false and p.branches = :branchId")
     @Query("SELECT p FROM Product p JOIN p.branches b WHERE p.deleted = false AND b.id = :branchId")
-    Page<Product>findAllProductByBranch(Long branchId,Pageable pageable);
+    List<Product>findAllProductByBranch(Long branchId);
 
-    Page<Product>  findAllByBusinessSubcategoryIdAndDeletedFalse(Long subCategoryId, Pageable pageable);
+    List<Product>  findAllByBusinessSubcategoryIdAndDeletedFalse(Long subCategoryId);
 
 
     Optional<Product>findFirstBySkuIdAndDeletedFalse(String skuId);

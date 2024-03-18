@@ -28,19 +28,19 @@ public class ProductCustomerController {
 
 
     @GetMapping("/getAll")
-    public Page<ProductModel> getAllProduct(@PageableDefault(sort = "id", direction = DESC) Pageable pageable) {
+    public List<ProductModel> getAllProduct() {
         User user = UserUtils.getLoggedInUser();
-        return productsService.getAllProductStore(Long.valueOf(user.getBranchId()),pageable);
+        return productsService.getAllProductStore(Long.valueOf(user.getBranchId()));
     }
 
     @GetMapping("/category/{categoryId}")
-    public Page<ProductModel> getAllProductByCategory(@PageableDefault(sort = "id", direction = DESC) Pageable pageable,@PathVariable Long categoryId) {
-        return productsService.getAllProductByCategory(categoryId,pageable);
+    public List<ProductModel> getAllProductByCategory(@PathVariable Long categoryId) {
+        return productsService.getAllProductByCategory(categoryId);
     }
 
     @GetMapping("/subcategory/{subcategoryId}")
-    public Page<ProductModel> getAllProductBySubCategory(@PageableDefault(sort = "id", direction = DESC) Pageable pageable,@PathVariable Long subcategoryId) {
-        return productsService.getAllProductBySubCategory(subcategoryId,pageable);
+    public List<ProductModel> getAllProductBySubCategory(@PathVariable Long subcategoryId) {
+        return productsService.getAllProductBySubCategory(subcategoryId);
     }
 
     @GetMapping("/{sku}")

@@ -161,26 +161,26 @@ public class ProductServiceImpl implements ProductsService {
 
 
     @Override
-    public Page<ProductModel> getAllProduct(Pageable pageable){
+    public List<ProductModel> getAllProduct(){
 
-        return productRepository.findAll(pageable).map(Product::toModel);
+        return productRepository.findAll().stream().map(Product::toModel).toList();
     }
 
     @Override
-    public Page<ProductModel> getAllProductStore(Long branchId,Pageable pageable){
-        return productRepository.findAllProductByBranch(branchId,pageable).map(Product::toModel);
+    public List<ProductModel> getAllProductStore(Long branchId){
+        return productRepository.findAllProductByBranch(branchId).stream().map(Product::toModel).toList();
     }
 
     @Override
-    public Page<ProductModel> getAllProductByCategory(Long id,Pageable pageable){
+    public List<ProductModel> getAllProductByCategory(Long id){
 
-        return productRepository.findAllByBusinessCategoryIdAndDeletedFalse(id,pageable).map(Product::toModel);
+        return productRepository.findAllByBusinessCategoryIdAndDeletedFalse(id).stream().map(Product::toModel).toList();
     }
 
     @Override
-    public Page<ProductModel>  getAllProductBySubCategory(Long id,Pageable pageable){
+    public List<ProductModel>  getAllProductBySubCategory(Long id){
 
-        return productRepository.findAllByBusinessSubcategoryIdAndDeletedFalse(id,pageable).map(Product::toModel);
+        return productRepository.findAllByBusinessSubcategoryIdAndDeletedFalse(id).stream().map(Product::toModel).toList();
     }
 
     @Override

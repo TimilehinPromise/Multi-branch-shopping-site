@@ -27,18 +27,18 @@ public class StoreController {
 
 
     @GetMapping("getAll/{branchId}")
-    public Page<ProductModel> getAllProduct(@PageableDefault(sort = "id", direction = DESC) Pageable pageable,@PathVariable Long branchId) {
-        return productsService.getAllProductStore(branchId,pageable);
+    public List<ProductModel> getAllProduct(@PathVariable Long branchId) {
+        return productsService.getAllProductStore(branchId);
     }
 
     @GetMapping("/category/{categoryId}")
-    public Page<ProductModel> getAllProductByCategory(@PageableDefault(sort = "id", direction = DESC) Pageable pageable,@PathVariable Long categoryId) {
-        return productsService.getAllProductByCategory(categoryId,pageable);
+    public List<ProductModel> getAllProductByCategory(@PathVariable Long categoryId) {
+        return productsService.getAllProductByCategory(categoryId);
     }
 
     @GetMapping("/subcategory/{subcategoryId}")
-    public Page<ProductModel> getAllProductBySubCategory(@PageableDefault(sort = "id", direction = DESC) Pageable pageable,@PathVariable Long subcategoryId) {
-        return productsService.getAllProductBySubCategory(subcategoryId,pageable);
+    public List<ProductModel> getAllProductBySubCategory(@PathVariable Long subcategoryId) {
+        return productsService.getAllProductBySubCategory(subcategoryId);
     }
 
     @GetMapping("/{sku}")

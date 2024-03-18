@@ -17,4 +17,5 @@ public class UserModel {
     private String royaltyCode;
     private boolean emailVerified;
     private int branchId;
+    private String royaltyImage;
 }
