@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Table(name = "wallet")
 @Accessors(chain = true)
+@ToString
 public class Wallet extends BasePersistentEntity {
 
 

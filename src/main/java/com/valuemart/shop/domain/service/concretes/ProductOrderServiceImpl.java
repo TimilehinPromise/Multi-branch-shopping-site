@@ -348,9 +348,9 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     @Override
     public QrCodeResponse qrCodeResponse(String code){
         UserModel userModel =userService.getUserByRoyaltyCode(code);
-
+        System.out.println(userModel);
         Wallet wallet =  walletService.getWallet(userModel);
-
+        System.out.println(wallet);
         return QrCodeResponse.builder()
                 .amount(wallet.getAmount())
                 .model(userModel)
@@ -358,7 +358,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     }
 
     @Override
-    public ResponseMessage captureOrder(CaptureOrder order,User user, User staffUser){
+    public ResponseMessage captureOrder(CaptureOrder order, User user, User staffUser){
 
         Wallet wallet = walletService.getWallet(user);
         wallet.setAmount(BigDecimal.ZERO);

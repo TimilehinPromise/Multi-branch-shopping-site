@@ -2,11 +2,13 @@ package com.valuemart.shop.domain.models;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.Column;
 
 @Data
 @Builder
+@ToString
 public class UserModel {
 
     private Long userId;

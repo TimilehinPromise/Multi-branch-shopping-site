@@ -55,10 +55,12 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public Wallet getWallet(UserModel user){
+        System.out.println(user);
         Optional<Wallet> existingWallet = walletRepository.findFirstByUserId(user.getUserId());
         if (existingWallet.isEmpty()){
             throw new BadRequestException("Wallet not found, contact admin");
         }
+        System.out.println(existingWallet);
         return existingWallet.get();
     }
 
