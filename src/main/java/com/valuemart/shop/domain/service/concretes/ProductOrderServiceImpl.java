@@ -361,6 +361,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     public ResponseMessage captureOrder(CaptureOrder order, User user, User staffUser){
 
         Wallet wallet = walletService.getWallet(user);
+        BigDecimal amount = wallet.getAmount();
         wallet.setAmount(BigDecimal.ZERO);
         walletService.updateWallet(wallet);
 
@@ -369,6 +370,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
                 .status(OrderStatus.COMPLETED)
                 .user(user)
                 .branchId(Long.valueOf(staffUser.getBranchId()))
+                .discountedAmount(order.getTotalAmount().add(amount))
                 .fromCheckout(false)
                 .build();
 

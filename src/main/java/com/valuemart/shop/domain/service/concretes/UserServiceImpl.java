@@ -6,7 +6,6 @@ import com.valuemart.shop.domain.models.dto.AddressDTO;
 import com.valuemart.shop.domain.service.abstracts.EmailService;
 import com.valuemart.shop.domain.service.abstracts.UserService;
 import com.valuemart.shop.domain.util.GeneratorUtils;
-import com.valuemart.shop.domain.util.MapperUtil;
 import com.valuemart.shop.exception.BadRequestException;
 import com.valuemart.shop.exception.NotFoundException;
 import com.valuemart.shop.persistence.entity.Address;
@@ -190,8 +189,6 @@ public class UserServiceImpl implements UserService {
             throw new BadCredentialsException("wrong password");
         }
 
-        var oldObject = MapperUtil.copy(user, User.class);
-
         String hashedPassword = passwordEncoder.encode(passwordChange.getNewPassword());
         user.setPassword(hashedPassword);
 
@@ -199,13 +196,16 @@ public class UserServiceImpl implements UserService {
 
         emailService.passwordResetNotification(user,loginUrl);
 
-      //  auditEvent.publish(oldObject, savedEntity, USER_PASSWORD_UPDATE, USER);
         return savedEntity;
     }
 
     @Override
     public UserModel getUserByRoyaltyCode(String code){
-          return userRepository.findByRoyaltyCode(code).map(User::toModel).get();
+          UserModel userModel = userRepository.findByRoyaltyCode(code).map(User::toModel).get();
+          if (userModel == null){
+              throw new NotFoundException("User not found with such royalty code");
+          }
+          return userModel;
     }
 
     @Override
