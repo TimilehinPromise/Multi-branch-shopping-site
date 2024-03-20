@@ -4,7 +4,7 @@ import com.valuemart.shop.domain.QrCodeResponse;
 import com.valuemart.shop.domain.ResponseMessage;
 import com.valuemart.shop.domain.models.OrderModel;
 import com.valuemart.shop.domain.models.dto.AdminOrderResponseDTO;
-import com.valuemart.shop.domain.models.enums.OrderStatus;
+import com.valuemart.shop.domain.models.dto.CaptureOrder;
 import com.valuemart.shop.domain.service.abstracts.ProductOrderService;
 import com.valuemart.shop.domain.service.abstracts.UserService;
 import com.valuemart.shop.domain.util.UserUtils;
@@ -59,5 +59,12 @@ public class OrderAdminController {
     private ResponseMessage updateCustomerOrderStatus(@RequestBody AdminOrderResponseDTO dto){
         User user = userService.getUser(dto.getUserId());
       return productOrderService.updateOrderByAdmin(dto.getOrderId(), dto.getBranchId(), dto.getStatus(),user, dto.getMessage());
+    }
+
+    @PostMapping("/capture-order")
+    private ResponseMessage captureInStoreOrder(@RequestBody CaptureOrder order){
+        User user = userService.getUser(order.getUserId());
+        User staffUser = UserUtils.getLoggedInUser();
+        return productOrderService.captureOrder(order,user,staffUser);
     }
 }

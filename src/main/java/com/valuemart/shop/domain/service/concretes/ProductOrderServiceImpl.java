@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.valuemart.shop.domain.QrCodeResponse;
 import com.valuemart.shop.domain.ResponseMessage;
 import com.valuemart.shop.domain.models.*;
+import com.valuemart.shop.domain.models.dto.CaptureOrder;
 import com.valuemart.shop.domain.models.dto.RedirectDTO;
 import com.valuemart.shop.domain.models.dto.ThresholdDTO;
 import com.valuemart.shop.domain.models.enums.OrderStatus;
@@ -354,5 +355,32 @@ public class ProductOrderServiceImpl implements ProductOrderService {
                 .amount(wallet.getAmount())
                 .model(userModel)
                 .build();
+    }
+
+    @Override
+    public ResponseMessage captureOrder(CaptureOrder order,User user, User staffUser){
+
+        Wallet wallet = walletService.getWallet(user);
+        wallet.setAmount(BigDecimal.ZERO);
+        walletService.updateWallet(wallet);
+
+        Orders orders = Orders.builder()
+                .amount(order.getTotalAmount())
+                .status(OrderStatus.COMPLETED)
+                .user(user)
+                .branchId(Long.valueOf(staffUser.getBranchId()))
+                .fromCheckout(false)
+                .build();
+
+        ordersRepository.save(orders);
+
+        ThresholdDTO threshold = thresholdService.getThresholdByValueOrNearestBelow(order.getTotalAmount());
+        if (Objects.nonNull(threshold)){
+            wallet.setCount(wallet.getCount()+ 1);
+            wallet.setAmount(threshold.getMonetaryAmount());
+            walletService.updateWallet(wallet);
+        }
+
+      return ResponseMessage.builder().message("Capture Order Done Successfully").build();
     }
 }

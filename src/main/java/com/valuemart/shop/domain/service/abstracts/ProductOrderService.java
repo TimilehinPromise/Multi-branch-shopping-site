@@ -5,6 +5,7 @@ import com.valuemart.shop.domain.ResponseMessage;
 import com.valuemart.shop.domain.models.DiscountResponse;
 import com.valuemart.shop.domain.models.OrderModel;
 import com.valuemart.shop.domain.models.RedirectResponse;
+import com.valuemart.shop.domain.models.dto.CaptureOrder;
 import com.valuemart.shop.domain.models.dto.RedirectDTO;
 import com.valuemart.shop.domain.models.enums.OrderStatus;
 import com.valuemart.shop.persistence.entity.User;
@@ -32,4 +33,6 @@ public interface ProductOrderService {
     RedirectResponse handleRedirect(RedirectDTO dto, User user);
 
     QrCodeResponse qrCodeResponse(String code);
+
+    ResponseMessage captureOrder(CaptureOrder order, User user, User staffUser);
 }
