@@ -168,7 +168,6 @@ public class UserServiceImpl implements UserService {
         }
         String hashedPassword = passwordEncoder.encode(newPassword.getNewPassword());
         User user = userOptional.get();
-        var oldObject = MapperUtil.copy(user, User.class);
         user.setPassword(hashedPassword);
         if (user.getRetries()>=5 && !user.isEnabled()){
             user.setEnabled(true);
