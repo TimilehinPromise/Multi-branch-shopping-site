@@ -15,6 +15,7 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.TimeZone;
 
 
@@ -53,13 +54,13 @@ public class Orders extends BasePersistentEntity implements ToModel{
 
     @Override
     public OrderModel toModel() {
-        CartModel cartModel;
-        System.out.println(details);
+        CartModel cartModel = new CartModel();
+        if (Objects.nonNull(details)){
         try {
           cartModel = MapperUtil.MAPPER.readValue(details, CartModel.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
-        }
+        }}
         return
                 OrderModel.builder()
                         .address(address)
