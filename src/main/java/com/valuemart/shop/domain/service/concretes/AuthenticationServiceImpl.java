@@ -1,10 +1,7 @@
 package com.valuemart.shop.domain.service.concretes;
 
 import com.valuemart.shop.domain.ResponseMessage;
-import com.valuemart.shop.domain.models.CustomerLoginDTO;
-import com.valuemart.shop.domain.models.LoginResponseModel;
-import com.valuemart.shop.domain.models.RoleType;
-import com.valuemart.shop.domain.models.UserCreate;
+import com.valuemart.shop.domain.models.*;
 import com.valuemart.shop.domain.service.abstracts.AuthenticationService;
 import com.valuemart.shop.domain.service.abstracts.EmailService;
 import com.valuemart.shop.domain.service.abstracts.QRCodeService;
@@ -30,6 +27,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static com.valuemart.shop.domain.models.RoleType.*;

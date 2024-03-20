@@ -3,11 +3,13 @@ package com.valuemart.shop.controller;
 import com.valuemart.shop.domain.ResponseMessage;
 import com.valuemart.shop.domain.models.ThresholdModel;
 import com.valuemart.shop.domain.models.UserCreate;
+import com.valuemart.shop.domain.models.UserModel;
 import com.valuemart.shop.domain.models.dto.AdminLogisticDto;
 import com.valuemart.shop.domain.models.dto.DisableStaffDTO;
 import com.valuemart.shop.domain.service.abstracts.AuthenticationService;
 import com.valuemart.shop.domain.service.abstracts.DeliveryService;
 import com.valuemart.shop.domain.service.abstracts.ThresholdService;
+import com.valuemart.shop.domain.service.abstracts.UserService;
 import com.valuemart.shop.domain.util.UserUtils;
 import com.valuemart.shop.persistence.entity.Threshold;
 import com.valuemart.shop.persistence.entity.User;
@@ -29,11 +31,14 @@ public class SuperController {
     private final AuthenticationService authenticationService;
     private final ThresholdService thresholdService;
 
+    private final UserService userService;
+
     private final DeliveryService deliveryService;
 
-    public SuperController(AuthenticationService authenticationService, ThresholdService thresholdService, DeliveryService deliveryService) {
+    public SuperController(AuthenticationService authenticationService, ThresholdService thresholdService, UserService userService, DeliveryService deliveryService) {
         this.authenticationService = authenticationService;
         this.thresholdService = thresholdService;
+        this.userService = userService;
         this.deliveryService = deliveryService;
     }
 
@@ -63,6 +68,12 @@ public class SuperController {
     @GetMapping(path = "/loyalty", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Threshold> getAllLoyaltyThreshold(){
         return thresholdService.getAllThreshold();
+    }
+
+
+    @GetMapping(path = "/getAllStaffs")
+    public List<UserModel> getAllStaffs(){
+        return userService.getAllStaffs();
     }
 
 

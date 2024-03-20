@@ -34,8 +34,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     List<User>findUsersByActivatedFalseAndRole(Role role);
 
-
-
+    List<User>findAllByRoleId(Long roleId);
 
     Page<User> findUsersByDeletedFalse(Pageable pageable);
 

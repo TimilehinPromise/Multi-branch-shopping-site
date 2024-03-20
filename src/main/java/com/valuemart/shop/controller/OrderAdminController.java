@@ -51,6 +51,7 @@ public class OrderAdminController {
 
     @GetMapping("/qrCode")
     private QrCodeResponse getQrCodeResponse(@RequestParam String qrCode){
+        System.out.println(qrCode);
        return productOrderService.qrCodeResponse(qrCode);
     }
 

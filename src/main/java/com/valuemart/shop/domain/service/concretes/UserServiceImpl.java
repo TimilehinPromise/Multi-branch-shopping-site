@@ -208,6 +208,11 @@ public class UserServiceImpl implements UserService {
           return userRepository.findByRoyaltyCode(code).map(User::toModel).get();
     }
 
+    @Override
+    public List<UserModel> getAllStaffs(){
+        return userRepository.findAllByRoleId(Long.valueOf(2)).stream().map(User::toModel).toList();
+    }
+
 
 
 
