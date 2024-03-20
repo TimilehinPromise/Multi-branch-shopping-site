@@ -39,7 +39,7 @@ public class FlutterwaveFacade extends HttpApiClient implements PaymentProcessor
                         .email(user.getEmail())
                         .name(user.getFirstName() + " " + user.getLastName())
                 .build())
-                .redirectUrl("https://valuemartdev-1f65ed2b6656.herokuapp.com/v1/api/payment/check")
+                .redirectUrl("https://value-mart.onrender.com/payment")
                 .transactionRef(payment.getPaymentReference().getReferenceId())
                 .build();
     }
