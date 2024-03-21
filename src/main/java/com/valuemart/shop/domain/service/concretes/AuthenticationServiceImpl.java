@@ -20,14 +20,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static com.valuemart.shop.domain.models.RoleType.*;
@@ -56,8 +51,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final QRCodeService qrCodeService;
 
     @Override
-    public LoginResponseModel login(CustomerLoginDTO loginForm) {
+    public LoginResponseModel customerLogin(CustomerLoginDTO loginForm) {
         User user = getUser(loginForm.getEmail());
+        if (user.getRole().getName() != "ROLE_CUSTOMER"){
+            throw new BadRequestException("Wrong Credentials");
+        }
         log.info(user.toString());
         log.info("user fetched");
         checkRetries(user);
@@ -66,6 +64,59 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setRetries(0);
         userRepository.save(user);
        // auditEvent.publish(user, user, USER_LOGIN, AGENT);
+        TokenStore store = tokenService.generatorToken(user);
+        return  LoginResponseModel.builder()
+                .token(store.getToken())
+                .expires(store.getExpiredAt())
+                .type(user.getRole().getName())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .build();
+    }
+
+    @Override
+    public LoginResponseModel staffLogin(CustomerLoginDTO loginForm) {
+        User user = getUser(loginForm.getEmail());
+
+        if (user.getRole().getName() != "ROLE_STAFF"){
+            throw new BadRequestException("Wrong Credentials");
+        }
+        log.info(user.toString());
+        log.info("user fetched");
+        checkRetries(user);
+
+        matchPassword(loginForm.getPassword(), user.getPassword(),user);
+        user.setRetries(0);
+        userRepository.save(user);
+        // auditEvent.publish(user, user, USER_LOGIN, AGENT);
+        TokenStore store = tokenService.generatorToken(user);
+        return  LoginResponseModel.builder()
+                .token(store.getToken())
+                .expires(store.getExpiredAt())
+                .type(user.getRole().getName())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .build();
+    }
+
+    @Override
+    public LoginResponseModel adminLogin(CustomerLoginDTO loginForm) {
+        User user = getUser(loginForm.getEmail());
+
+        if (user.getRole().getName() != "ROLE_ADMIN"){
+            throw new BadRequestException("Wrong Credentials");
+        }
+
+        log.info(user.toString());
+        log.info("user fetched");
+        checkRetries(user);
+
+        matchPassword(loginForm.getPassword(), user.getPassword(),user);
+        user.setRetries(0);
+        userRepository.save(user);
+        // auditEvent.publish(user, user, USER_LOGIN, AGENT);
         TokenStore store = tokenService.generatorToken(user);
         return  LoginResponseModel.builder()
                 .token(store.getToken())

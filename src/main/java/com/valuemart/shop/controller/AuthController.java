@@ -27,18 +27,18 @@ public class AuthController {
 
     @PostMapping("/login")
     public LoginResponseModel customerLogin(@Valid @RequestBody CustomerLoginDTO loginForm) {
-        return authenticationService.login(loginForm);
+        return authenticationService.customerLogin(loginForm);
     }
 
 
     @PostMapping("/super/login")
     public LoginResponseModel superLogin(@Valid @RequestBody CustomerLoginDTO loginForm) {
-        return authenticationService.login(loginForm);
+        return authenticationService.adminLogin(loginForm);
     }
 
     @PostMapping("/staff/login")
     public LoginResponseModel staffLogin(@Valid @RequestBody CustomerLoginDTO loginForm) {
-        return authenticationService.login(loginForm);
+        return authenticationService.staffLogin(loginForm);
     }
 
     @PostMapping("/signup")

@@ -20,4 +20,5 @@ public class UserModel {
     private boolean emailVerified;
     private int branchId;
     private String royaltyImage;
+    private boolean status;
 }

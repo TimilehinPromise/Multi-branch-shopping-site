@@ -152,6 +152,7 @@ public class User extends BasePersistentEntity implements UserDetails, ToModel {
                 .branchId(branchId)
                 .userId(id)
                 .royaltyImage(royaltyQr)
+                .status(enabled)
                 .build();
     }
 }
