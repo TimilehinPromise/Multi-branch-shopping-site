@@ -232,6 +232,7 @@ public class ProductServiceImpl implements ProductsService {
             ProductModel model = getProductById(viewed.getProductId());
             productList.add(model);
         }
+        productList.remove(1);
 
         return productList;
     }
