@@ -4,6 +4,7 @@ import com.valuemart.shop.domain.ResponseMessage;
 import com.valuemart.shop.domain.models.ProductModel;
 import com.valuemart.shop.domain.models.dto.ProductDTO;
 import com.valuemart.shop.persistence.entity.BusinessCategory;
+import com.valuemart.shop.persistence.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +25,8 @@ public interface ProductsService {
     List<ProductModel>  getAllProductBySubCategory(Long id);
 
     ProductModel getProductBySkuId(String skuId);
+
+    List<ProductModel> getRecentlyViewed(User user);
 
     List<BusinessCategory> getCategories();
 

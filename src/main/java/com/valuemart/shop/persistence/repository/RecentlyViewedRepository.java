@@ -17,4 +17,8 @@ public interface RecentlyViewedRepository extends JpaRepository<RecentlyViewed,L
     @Query("SELECT rv FROM RecentlyViewed rv WHERE rv.userId = :userId ORDER BY rv.viewTimestamp ASC")
     List<RecentlyViewed> findOldestByUserId(@Param("userId") Long userId, Pageable pageable);
 
+
+    @Query("SELECT rv FROM RecentlyViewed rv WHERE rv.userId = :userId ORDER BY rv.viewTimestamp DESC")
+    List<RecentlyViewed> findByUserId(@Param("userId") Long userId);
+
 }

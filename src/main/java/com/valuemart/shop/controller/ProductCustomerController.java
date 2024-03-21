@@ -48,6 +48,12 @@ public class ProductCustomerController {
         return productsService.getProductBySkuId(sku);
     }
 
+    @GetMapping("/recentlyViewed")
+    public List<ProductModel>getAllRecentlyViewed(){
+        User user = UserUtils.getLoggedInUser();
+        return productsService.getRecentlyViewed(user);
+    }
+
     @GetMapping("/relatedBy/{sku}")
     public List<ProductModel> getAllProductRelatedBy(@RequestParam String related, @RequestParam String keyword,@PathVariable String sku ) {
         return productsService.getProductRelatedBy(keyword,sku);

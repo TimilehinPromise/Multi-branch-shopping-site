@@ -21,7 +21,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import java.io.InputStream;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -61,9 +63,9 @@ public class ProductServiceImpl implements ProductsService {
     public ResponseMessage createProduct(ProductDTO dto) {
         Product product = Product.fromModel(dto);
 
-        if (productRepository.existsProductByNameIgnoreCaseAndDeletedFalse(dto.getName())){
+        if (productRepository.existsProductByNameIgnoreCaseAndDeletedFalse(dto.getName())) {
             System.out.println("already exists");
-            throw new BadRequestException("Product "+ dto.getName() + " already exists");
+            throw new BadRequestException("Product " + dto.getName() + " already exists");
         }
 
         Map<Long, Branch> branches = getBranchMap();
@@ -77,7 +79,7 @@ public class ProductServiceImpl implements ProductsService {
 
         Product savedProduct = productRepository.save(product);
 
-        String finalSkuId  = ProductUtil.generateSkuId(savedProduct);
+        String finalSkuId = ProductUtil.generateSkuId(savedProduct);
         savedProduct.setSkuId(finalSkuId);
 
         productRepository.save(savedProduct);
@@ -89,8 +91,8 @@ public class ProductServiceImpl implements ProductsService {
         Product product = Product.fromModel(dto);
         Product existingProduct = productRepository.findFirstBySkuIdAndDeletedFalse(dto.getSkuId()).get();
 
-        if(productRepository.existsProductByNameIgnoreCaseAndSkuIdNot(dto.getName(),existingProduct.getSkuId())){
-            throw new BadRequestException("Product "+ dto.getName() + " already exists");
+        if (productRepository.existsProductByNameIgnoreCaseAndSkuIdNot(dto.getName(), existingProduct.getSkuId())) {
+            throw new BadRequestException("Product " + dto.getName() + " already exists");
         }
 
         Map<Long, Branch> branches = getBranchMap();
@@ -98,11 +100,12 @@ public class ProductServiceImpl implements ProductsService {
 
         associateCategoryAndSubcategory(product, dto);
         addProductImages(product, dto.getImages());
-        updateExistingProductWithDTO(existingProduct,product);
+        updateExistingProductWithDTO(existingProduct, product);
 
         productRepository.save(existingProduct);
         return ResponseMessageUtil.createSuccessResponse("Product " + product.getName(), "updated");
     }
+
     private void updateExistingProductWithDTO(Product existingProduct, Product product) {
         if (!existingProduct.getName().equals(product.getName())) {
             existingProduct.setName(product.getName());
@@ -119,25 +122,23 @@ public class ProductServiceImpl implements ProductsService {
         if (existingProduct.isEnabled() != product.isEnabled()) {
             existingProduct.setEnabled(product.isEnabled());
         }
-        if (existingProduct.getSeason().equals(product.getSeason())){
+        if (existingProduct.getSeason().equals(product.getSeason())) {
             existingProduct.setSeason(product.getSeason());
         }
-        if(existingProduct.getBusinessCategory().getId() != null && !existingProduct.getBusinessCategory().getId().equals(product.getBusinessCategory().getId()))
-        {
+        if (existingProduct.getBusinessCategory().getId() != null && !existingProduct.getBusinessCategory().getId().equals(product.getBusinessCategory().getId())) {
             existingProduct.setBusinessCategory(product.getBusinessCategory());
         }
-        if(existingProduct.getBusinessSubcategory().getId() != null && !existingProduct.getBusinessSubcategory().getId().equals(product.getBusinessSubcategory().getId()))
-        {
+        if (existingProduct.getBusinessSubcategory().getId() != null && !existingProduct.getBusinessSubcategory().getId().equals(product.getBusinessSubcategory().getId())) {
             existingProduct.setBusinessSubcategory(product.getBusinessSubcategory());
         }
-        if(existingProduct.getBusinessSubcategory().getId() != null && !existingProduct.getBusinessSubcategory().getId().equals(product.getBusinessSubcategory().getId()))
-        {
+        if (existingProduct.getBusinessSubcategory().getId() != null && !existingProduct.getBusinessSubcategory().getId().equals(product.getBusinessSubcategory().getId())) {
             existingProduct.setBusinessSubcategory(product.getBusinessSubcategory());
         }
-        updateProductImages(existingProduct,product);
+        updateProductImages(existingProduct, product);
 
 
     }
+
     private void updateProductImages(Product existingProduct, Product newProduct) {
         Set<String> existingImageUrls = existingProduct.getImages().stream()
                 .map(ProductImage::getImageUrl)
@@ -159,46 +160,51 @@ public class ProductServiceImpl implements ProductsService {
     }
 
 
-
     @Override
-    public List<ProductModel> getAllProduct(){
+    public List<ProductModel> getAllProduct() {
 
         return productRepository.findAll().stream().map(Product::toModel).toList();
     }
 
     @Override
-    public List<ProductModel> getAllProductStore(Long branchId){
+    public List<ProductModel> getAllProductStore(Long branchId) {
         return productRepository.findAllProductByBranch(branchId).stream().map(Product::toModel).toList();
     }
 
     @Override
-    public List<ProductModel> getAllProductByCategory(Long id){
+    public List<ProductModel> getAllProductByCategory(Long id) {
 
         return productRepository.findAllByBusinessCategoryIdAndDeletedFalse(id).stream().map(Product::toModel).toList();
     }
 
     @Override
-    public List<ProductModel>  getAllProductBySubCategory(Long id){
+    public List<ProductModel> getAllProductBySubCategory(Long id) {
 
         return productRepository.findAllByBusinessSubcategoryIdAndDeletedFalse(id).stream().map(Product::toModel).toList();
     }
 
     @Override
-    public ProductModel getProductBySkuId(String skuId){
+    public ProductModel getProductBySkuId(String skuId) {
         Optional<User> user = UserUtils.getLoggedInUserOptional();
 
         ProductModel model = productRepository.findFirstBySkuIdAndDeletedFalse(skuId).map(Product::toModel)
                 .orElseThrow(() -> new NotFoundException("Product Not Found"));
 
-        if (user.isPresent()){
+        if (user.isPresent()) {
             updateRecentlyViewed(user.get().getId(), model.getId());
         }
 
         return model;
     }
 
+    public ProductModel getProductById(Long id) {
+        ProductModel model = productRepository.findById(id).map(Product::toModel)
+                .orElseThrow(() -> new NotFoundException("Product Not Found"));
+        return model;
+    }
+
     @Async
-    public void updateRecentlyViewed(Long userId, Long productId){
+    public void updateRecentlyViewed(Long userId, Long productId) {
         // Logic to handle recently viewed items
         RecentlyViewed recentlyViewed = recentlyViewedRepository.findByUserIdAndProductId(userId, productId);
         if (recentlyViewed != null) {
@@ -206,7 +212,7 @@ public class ProductServiceImpl implements ProductsService {
         } else {
             if (recentlyViewedRepository.countByUserId(userId) >= 9) {
                 Pageable limit = PageRequest.of(0, 1);
-               List<RecentlyViewed> oldestViewed = recentlyViewedRepository.findOldestByUserId(userId,limit);
+                List<RecentlyViewed> oldestViewed = recentlyViewedRepository.findOldestByUserId(userId, limit);
                 recentlyViewedRepository.delete(oldestViewed.get(0));
             }
             recentlyViewed = new RecentlyViewed(userId, productId, LocalDateTime.now());
@@ -215,13 +221,28 @@ public class ProductServiceImpl implements ProductsService {
 
     }
 
+
     @Override
-    public List<BusinessCategory> getCategories(){
+    public List<ProductModel> getRecentlyViewed(User user) {
+
+        List<RecentlyViewed> recentlyViewedList = recentlyViewedRepository.findByUserId(user.getId());
+        List<ProductModel> productList = new ArrayList<>();
+
+        for (RecentlyViewed viewed : recentlyViewedList) {
+            ProductModel model = getProductById(viewed.getProductId());
+            productList.add(model);
+        }
+
+        return productList;
+    }
+
+    @Override
+    public List<BusinessCategory> getCategories() {
         return businessCategoryRepository.findAllByDeletedFalse();
     }
 
     @Override
-    public List<ProductModel> getProductRelatedBy(String related, String keyword,String productSku) {
+    public List<ProductModel> getProductRelatedBy(String related, String keyword, String productSku) {
 
         productRepository.findFirstBySkuIdAndDeletedFalse(productSku).map(Product::toModel)
                 .orElseThrow(() -> new NotFoundException("Product Not Found"));
@@ -230,10 +251,10 @@ public class ProductServiceImpl implements ProductsService {
 
         if (related.equalsIgnoreCase(RelatedBy.BRAND.getRelatedByName())) {
             System.out.println("search by brand");
-            products = productRepository.findAllByBrandIgnoreCaseAndDeletedFalseAndSkuIdNot(keyword.toLowerCase(),productSku);
+            products = productRepository.findAllByBrandIgnoreCaseAndDeletedFalseAndSkuIdNot(keyword.toLowerCase(), productSku);
         } else if (related.equalsIgnoreCase(RelatedBy.SUBCATEGORY.getRelatedByName())) {
             System.out.println("search by subcategory");
-            products = productRepository.findAllByBusinessSubcategoryIdAndDeletedFalseAndSkuIdNot(Long.valueOf(keyword),productSku);
+            products = productRepository.findAllByBusinessSubcategoryIdAndDeletedFalseAndSkuIdNot(Long.valueOf(keyword), productSku);
         } else {
             System.out.println("no valid search criteria");
             return Collections.emptyList();
@@ -267,15 +288,15 @@ public class ProductServiceImpl implements ProductsService {
     }
 
     @Override
-    public List<ProductModel> getProductsBySeason(){
+    public List<ProductModel> getProductsBySeason() {
         Seasons currentSeason = Seasons.getCurrentSeason();
-      return  productRepository.findAllBySeasonAndDeletedFalse(currentSeason.name()).stream().map(Product::toModel).collect(Collectors.toList());
+        return productRepository.findAllBySeasonAndDeletedFalse(currentSeason.name()).stream().map(Product::toModel).collect(Collectors.toList());
     }
 
     @Override
-    public List<ProductModel> getProductsBySeasonStore(Long branchId){
+    public List<ProductModel> getProductsBySeasonStore(Long branchId) {
         Seasons currentSeason = Seasons.getCurrentSeason();
-        return  productRepository.findAllBySeasonAndDeletedFalseStore(currentSeason.name(),branchId).stream().map(Product::toModel).collect(Collectors.toList());
+        return productRepository.findAllBySeasonAndDeletedFalseStore(currentSeason.name(), branchId).stream().map(Product::toModel).collect(Collectors.toList());
     }
 
 
@@ -283,9 +304,9 @@ public class ProductServiceImpl implements ProductsService {
     public Page<ProductModel> filterProducts(String skuId,
                                              Long productName,
                                              String branch,
-                                             Pageable pageable){
+                                             Pageable pageable) {
 
-        ProductSpecification productSpecification =   buildSpecification(skuId,productName,branch);
+        ProductSpecification productSpecification = buildSpecification(skuId, productName, branch);
 
         return productRepository.findAll(Specification.where(productSpecification), pageable).map(Product::toModel);
 
@@ -294,12 +315,12 @@ public class ProductServiceImpl implements ProductsService {
     @Override
     public Page<ProductModel> searchProducts(String keyword,
                                              Long branchId,
-                                             Pageable pageable){
+                                             Pageable pageable) {
 
         Map<Long, Branch> branches = getBranchMap();
-        Set<Long>  branch = addBranchById(branchId, branches);
+        Set<Long> branch = addBranchById(branchId, branches);
 
-        Specification<Product> spec =  searchInBranchWithKeyword(branch,keyword);
+        Specification<Product> spec = searchInBranchWithKeyword(branch, keyword);
 
         return productRepository.findAll(Specification.where(spec), pageable).map(Product::toModel);
 
@@ -321,7 +342,7 @@ public class ProductServiceImpl implements ProductsService {
 
     private void addProductImages(Product product, List<ProductImageModel> images) {
         for (ProductImageModel imageModel : images) {
-            ProductImage image = new ProductImage(imageModel.getImageUrl(),product);
+            ProductImage image = new ProductImage(imageModel.getImageUrl(), product);
             product.addImage(image);
         }
     }
@@ -434,7 +455,7 @@ public class ProductServiceImpl implements ProductsService {
                 ProductDTO productDTO = buildProductDTOFromRow(row, errorLog);
                 if (productDTO != null) {
 
-                     createProduct(productDTO);
+                    createProduct(productDTO);
                     log.info("Product processed: " + productName);
                 } else {
                     log.info("Product processing failed for row: " + row.getRowNum());
@@ -551,8 +572,8 @@ public class ProductServiceImpl implements ProductsService {
             String subCategoryName = formatter.formatCellValue(row.getCell(9));
             System.out.println(subCategoryName);
 
-             categoryName = getFormattedCellValue(categoryName);
-             subCategoryName = getFormattedCellValue(subCategoryName);
+            categoryName = getFormattedCellValue(categoryName);
+            subCategoryName = getFormattedCellValue(subCategoryName);
             Optional<BusinessCategory> categoryOpt = businessCategoryRepository.findByName(categoryName);
             Optional<BusinessSubcategory> subCategoryOpt = businessSubCategoryRepository.findByName(subCategoryName);
             if (!categoryOpt.isPresent() || !subCategoryOpt.isPresent()) {
@@ -597,8 +618,6 @@ public class ProductServiceImpl implements ProductsService {
     private boolean getBooleanValue(Cell cell) {
         return cell != null && cell.getCellType() == CellType.BOOLEAN && cell.getBooleanCellValue();
     }
-
-
 
 
 }
