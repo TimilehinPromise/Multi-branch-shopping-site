@@ -246,7 +246,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         .build());
                 log.info("Staff successfully created by Admin " + user.getFirstName());
 
-                emailService.sendStaffCreationEmail(savedStaff,user,branch.getName());
+                emailService.sendStaffCreationEmail(savedStaff,user,branch.getName(),userCreate.getPassword());
                 return ResponseMessage.builder().message("Staff successfully created by Admin"+ user.getFirstName()).build();
 
             }}

@@ -9,7 +9,7 @@ public interface EmailService {
 
 
     @Async
-    void sendStaffCreationEmail(User user, User admin, String branchName);
+    void sendStaffCreationEmail(User user, User admin, String branchName,String plainPass);
 
     void sendPasswordReset(User user, String link);
 

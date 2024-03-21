@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,11 @@ public class EmailServiceImpl implements EmailService {
 
     public static final String USER_CREATION_SUBJECT = "Welcome to ValueMart - Your Shopping Adventure Begins!";
 
-    public static final String LOGIN_URL = "localhost:9010/v1/api/auth/login";
+    @Value("${app.login.url}")
+    String customerLoginUrl;
+
+    @Value("${app.login.staff.url}")
+    String staffLoginUrl;
 
     public static final String PIN_UPDATE = "Password Update Alert for Your ValueMart Account";
 
@@ -52,7 +57,7 @@ public class EmailServiceImpl implements EmailService {
         Template template = velocityEngine.getTemplate("/templates/customercreate.vm");
         VelocityContext context = new VelocityContext();
         context.put("CustomerName", user.getFirstName() + " " + user.getLastName());
-        context.put("loginurl",LOGIN_URL);
+        context.put("loginurl",customerLoginUrl);
         context.put("MallName",NAME);
         context.put("Year", LocalDateTime.now().getYear());
         StringWriter stringWriter = new StringWriter();
@@ -63,13 +68,13 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     @Async
-    public void sendStaffCreationEmail(User user, User admin,String branchName)  {
+    public void sendStaffCreationEmail(User user, User admin,String branchName,String plainPass)  {
         Template template = velocityEngine.getTemplate("/templates/staffcreate.vm");
         VelocityContext context = new VelocityContext();
         context.put("CustomerName", user.getFirstName() + " " + user.getLastName());
         context.put("AdminName",admin.getFirstName() + " " + admin.getLastName());
-        context.put("passsword",user.getPassword());
-        context.put("loginurl",LOGIN_URL);
+        context.put("password",user.getPassword());
+        context.put("loginurl",staffLoginUrl);
         context.put("MallName",NAME);
         context.put("Year", LocalDateTime.now().getYear());
         context.put("branch",branchName);
