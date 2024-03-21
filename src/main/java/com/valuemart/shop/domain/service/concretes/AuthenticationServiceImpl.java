@@ -53,7 +53,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public LoginResponseModel customerLogin(CustomerLoginDTO loginForm) {
         User user = getUser(loginForm.getEmail());
-        if (user.getRole().getName() != "ROLE_CUSTOMER"){
+        if (!user.getRole().getName().equals("ROLE_CUSTOMER")){
             throw new BadRequestException("Wrong Credentials");
         }
         log.info(user.toString());
@@ -79,7 +79,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public LoginResponseModel staffLogin(CustomerLoginDTO loginForm) {
         User user = getUser(loginForm.getEmail());
 
-        if (user.getRole().getName() != "ROLE_STAFF"){
+        if (!user.getRole().getName().equals("ROLE_STAFF")){
             throw new BadRequestException("Wrong Credentials");
         }
         log.info(user.toString());
@@ -105,7 +105,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public LoginResponseModel adminLogin(CustomerLoginDTO loginForm) {
         User user = getUser(loginForm.getEmail());
 
-        if (user.getRole().getName() != "ROLE_ADMIN"){
+        if (!user.getRole().getName().equals("ROLE_ADMIN")){
             throw new BadRequestException("Wrong Credentials");
         }
 
