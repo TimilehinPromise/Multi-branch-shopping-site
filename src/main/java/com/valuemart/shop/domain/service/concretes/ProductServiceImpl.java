@@ -243,6 +243,30 @@ public class ProductServiceImpl implements ProductsService {
     }
 
     @Override
+    public List<ProductModel> getProductRelatedBy(String brand, String productSku) {
+
+        Optional<Product> initialProductOpt = productRepository.findFirstBySkuIdAndDeletedFalse(productSku);
+        Product initialProduct = initialProductOpt
+                .orElseThrow(() -> new NotFoundException("Product Not Found"));
+
+        Set<Product> productsSet = new LinkedHashSet<>();
+
+        // Add products by brand
+        System.out.println("search by brand");
+        List<Product> brandProducts = productRepository.findAllByBrandIgnoreCaseAndDeletedFalseAndSkuIdNot(brand.toLowerCase(), productSku);
+        productsSet.addAll(brandProducts);
+
+        // If the initial product has a subcategory, add products from the same subcategory
+        if (initialProduct.getBusinessSubcategory() != null) {
+            Long subcategoryId = initialProduct.getBusinessSubcategory().getId();
+            List<Product> subcategoryProducts = productRepository.findAllByBusinessSubcategoryIdAndDeletedFalseAndSkuIdNot(subcategoryId, productSku);
+            productsSet.addAll(subcategoryProducts);
+        }
+
+        return productsSet.stream().map(Product::toModel).collect(Collectors.toList());
+    }
+
+    @Override
     public List<ProductModel> getProductsBySeason(){
         Seasons currentSeason = Seasons.getCurrentSeason();
       return  productRepository.findAllBySeasonAndDeletedFalse(currentSeason.name()).stream().map(Product::toModel).collect(Collectors.toList());

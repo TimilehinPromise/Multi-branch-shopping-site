@@ -29,6 +29,8 @@ public interface ProductsService {
 
     List<ProductModel> getProductRelatedBy(String related, String keyword, String sku);
 
+    List<ProductModel> getProductRelatedBy(String brand, String productSku);
+
     List<ProductModel> getProductsBySeason();
 
     List<ProductModel> getProductsBySeasonStore(Long branchId);

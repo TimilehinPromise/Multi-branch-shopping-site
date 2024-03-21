@@ -69,7 +69,7 @@ public class ProductAdminController {
 
     @GetMapping("/relatedBy/{sku}")
     public List<ProductModel> getAllProductRelatedBy(@RequestParam String related, @RequestParam String keyword, @PathVariable String sku ) {
-        return productsService.getProductRelatedBy(related,keyword,sku);
+        return productsService.getProductRelatedBy(keyword,sku);
     }
 
 
