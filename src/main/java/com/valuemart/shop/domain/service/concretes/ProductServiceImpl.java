@@ -232,7 +232,7 @@ public class ProductServiceImpl implements ProductsService {
             ProductModel model = getProductById(viewed.getProductId());
             productList.add(model);
         }
-        productList.remove(productList.size());
+        productList.remove(productList.size()-1);
 
         return productList;
     }
