@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Builder
 @Data
@@ -25,4 +26,5 @@ public class OrderModel {
     private Long branchId;
     private BigDecimal deliveryAmount;
     private String shopResponse;
+    private LocalDateTime createdAt;
 }
