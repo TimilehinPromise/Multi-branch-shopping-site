@@ -25,14 +25,4 @@ public class PaymentController {
         return orderService.handleRedirect(dto,user);
     }
 
-    @GetMapping("/check")
-    private RedirectResponse checkoutNGrok(@RequestParam String status, @RequestParam String tx_ref, @RequestParam String transaction_id){
-        User user = UserUtils.getLoggedInUser();
-        RedirectDTO dto = RedirectDTO.builder()
-                .status(status)
-                .transRef(tx_ref)
-                .transId(transaction_id)
-                .build();
-        return orderService.handleRedirect(dto,user);
-    }
 }

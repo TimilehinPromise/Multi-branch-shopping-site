@@ -224,7 +224,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     @Override
     public List<OrderModel> getOrderByCustomer(User user){
         System.out.println(user.getId());
-        return ordersRepository.findAllByUserId(user.getId()).stream().map(Orders::toModel).toList();
+        return ordersRepository.findAllByUserIdOrderByCreatedAtDesc(user.getId()).stream().map(Orders::toModel).toList();
     }
 
     @Override
@@ -266,15 +266,18 @@ public class ProductOrderServiceImpl implements ProductOrderService {
       Orders order = getOrderInternal(orderId, branchId,user);
         order.setStatus(status);
         order.setShopResponse(message);
-       String link =  createPayment(user).getLink();
+        ChargeModel model  =  createPayment(user,orderId);
+        String link = model.getLink();
+        Long paymentId = model.getPaymentId();
        order.setPaymentLink(link);
-      OrderModel orderModel =  ordersRepository.save(order).toModel();
+       order.setPaymentId(paymentId);
+        OrderModel orderModel =  ordersRepository.save(order).toModel();
         emailService.orderResponseNotification(user,"emptylinkfornow.com",message,orderModel.getDetails(),link);
         return ResponseMessage.builder().message("Order has been set to " + status.name()).build();
     }
 
 
-    public ChargeModel createPayment(User user){
+    public ChargeModel createPayment(User user,Long orderId){
         System.out.println("create payment method");
 
         Payment.PaymentReference reference = new Payment.PaymentReference();
@@ -294,10 +297,12 @@ public class ProductOrderServiceImpl implements ProductOrderService {
             payment.setAmount(model.getDiscountedAmount().compareTo(model.getAmount()) < 0 ? model.getDiscountedAmount() :model.getAmount());
             payment.setPaymentReference(reference);
             payment.setStatus(PaymentStatus.CREATED);
-            paymentRepository.save(payment);
+            payment.setOrderId(orderId);
+            Payment savedPayment = paymentRepository.save(payment);
             System.out.println(payment);
 
             ChargeModel chargeModel = paymentProcessor.initiatePayment(model,user,payment);
+            chargeModel.setPaymentId(savedPayment.getOrderId());
             System.out.println(chargeModel);
             return chargeModel;
         }
@@ -315,6 +320,8 @@ public class ProductOrderServiceImpl implements ProductOrderService {
      if (!payment.getPaymentReference().getUserId().equals(String.valueOf(user.getId()))){
          throw new NotFoundException("Transaction Not Found");
      }
+
+        Orders order = ordersRepository.findById(payment.getOrderId()).get();
         RedirectResponse redirectResponse = new RedirectResponse();
 
         final PaymentProcessor paymentProcessor = factory.getProcessor("Flutterwave");
@@ -325,6 +332,8 @@ public class ProductOrderServiceImpl implements ProductOrderService {
             payment.setStatus(PaymentStatus.SUCCESS);
             payment.setProviderResponse(response.getData().toString());
             paymentRepository.save(payment);
+            order.setStatus(OrderStatus.COMPLETED);
+            ordersRepository.save(order);
             redirectResponse.setMessage("Successful Payment");
             redirectResponse.setSuccess(true);
         }
@@ -333,6 +342,8 @@ public class ProductOrderServiceImpl implements ProductOrderService {
             payment.setStatus(PaymentStatus.FAILED);
             payment.setProviderResponse(response.toString());
             paymentRepository.save(payment);
+            order.setStatus(OrderStatus.FAILED);
+            ordersRepository.save(order);
             redirectResponse.setMessage("Payment Not Successful");
         }
 

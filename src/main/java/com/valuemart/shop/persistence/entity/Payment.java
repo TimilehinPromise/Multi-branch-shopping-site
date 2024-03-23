@@ -41,6 +41,8 @@ public class Payment extends BasePersistentEntity{
 
     private String providerResponse;
 
+    private Long orderId;
+
     @Data
     @Embeddable
     public static class PaymentReference implements Serializable {

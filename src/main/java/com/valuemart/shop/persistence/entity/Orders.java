@@ -51,6 +51,7 @@ public class Orders extends BasePersistentEntity implements ToModel{
     private String shopResponse;
     private Long addressId;
     private String paymentLink;
+    private Long paymentId;
 
     @Override
     public OrderModel toModel() {

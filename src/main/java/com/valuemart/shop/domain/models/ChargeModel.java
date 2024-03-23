@@ -8,4 +8,5 @@ import lombok.Data;
 @Builder
 public class ChargeModel {
     private String link;
+    private Long paymentId;
 }
