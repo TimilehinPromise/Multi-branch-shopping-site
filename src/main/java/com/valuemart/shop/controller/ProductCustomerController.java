@@ -56,7 +56,8 @@ public class ProductCustomerController {
 
     @GetMapping("/relatedBy/{sku}")
     public List<ProductModel> getAllProductRelatedBy(@RequestParam String related, @RequestParam String keyword,@PathVariable String sku ) {
-        return productsService.getProductRelatedBy(keyword,sku);
+        User user = UserUtils.getLoggedInUser();
+        return productsService.getProductRelatedBy(keyword,sku,Long.valueOf(user.getBranchId()));
     }
 
     @GetMapping("/season")

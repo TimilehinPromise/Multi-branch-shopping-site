@@ -53,8 +53,8 @@ public class StoreController {
 
 
     @GetMapping("/relatedBy/{sku}")
-    public List<ProductModel> getAllProductRelatedBy(@RequestParam String related, @RequestParam String keyword, @PathVariable String sku ) {
-        return productsService.getProductRelatedBy(keyword,sku);
+    public List<ProductModel> getAllProductRelatedBy(@RequestParam String related, @RequestParam String keyword, @PathVariable String sku ,@PathVariable Long branchId) {
+        return productsService.getProductRelatedBy(keyword,sku,branchId);
     }
 
     @GetMapping("/season/{branchId}")

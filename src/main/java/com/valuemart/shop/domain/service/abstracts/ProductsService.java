@@ -32,7 +32,7 @@ public interface ProductsService {
 
     List<ProductModel> getProductRelatedBy(String related, String keyword, String sku);
 
-    List<ProductModel> getProductRelatedBy(String brand, String productSku);
+    List<ProductModel> getProductRelatedBy(String brand, String productSku,Long branchId);
 
     List<ProductModel> getProductsBySeason();
 

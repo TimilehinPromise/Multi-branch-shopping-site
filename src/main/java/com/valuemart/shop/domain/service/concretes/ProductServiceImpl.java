@@ -265,7 +265,7 @@ public class ProductServiceImpl implements ProductsService {
     }
 
     @Override
-    public List<ProductModel> getProductRelatedBy(String brand, String productSku) {
+    public List<ProductModel> getProductRelatedBy(String brand, String productSku,Long branchId) {
 
         Optional<Product> initialProductOpt = productRepository.findFirstBySkuIdAndDeletedFalse(productSku);
         Product initialProduct = initialProductOpt
@@ -285,7 +285,11 @@ public class ProductServiceImpl implements ProductsService {
             productsSet.addAll(subcategoryProducts);
         }
 
-        return productsSet.stream().map(Product::toModel).collect(Collectors.toList());
+        // Filter products by the branchId. Only include products available in the specified branch.
+        return productsSet.stream()
+                .filter(product -> product.getBranches().stream().anyMatch(branch -> branch.getId().equals(branchId)))
+                .map(Product::toModel)
+                .collect(Collectors.toList());
     }
 
     @Override
