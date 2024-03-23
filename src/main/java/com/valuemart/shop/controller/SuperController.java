@@ -11,11 +11,14 @@ import com.valuemart.shop.domain.service.abstracts.DeliveryService;
 import com.valuemart.shop.domain.service.abstracts.ThresholdService;
 import com.valuemart.shop.domain.service.abstracts.UserService;
 import com.valuemart.shop.domain.util.UserUtils;
+import com.valuemart.shop.exception.BadRequestException;
 import com.valuemart.shop.persistence.entity.Threshold;
 import com.valuemart.shop.persistence.entity.User;
+import com.valuemart.shop.providers.cloudinary.CloudinaryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -30,16 +33,16 @@ public class SuperController {
 
     private final AuthenticationService authenticationService;
     private final ThresholdService thresholdService;
-
     private final UserService userService;
-
     private final DeliveryService deliveryService;
+    private final CloudinaryService cloudinaryService;
 
-    public SuperController(AuthenticationService authenticationService, ThresholdService thresholdService, UserService userService, DeliveryService deliveryService) {
+    public SuperController(AuthenticationService authenticationService, ThresholdService thresholdService, UserService userService, DeliveryService deliveryService, CloudinaryService cloudinaryService) {
         this.authenticationService = authenticationService;
         this.thresholdService = thresholdService;
         this.userService = userService;
         this.deliveryService = deliveryService;
+        this.cloudinaryService = cloudinaryService;
     }
 
 
@@ -59,7 +62,6 @@ public class SuperController {
         return deliveryService.addOrUpdateDeliveryAreas(dto);
     }
 
-
     @PostMapping("/loyalty")
     public ResponseMessage addOrUpdateLoyaltyThreshold(@RequestBody ThresholdModel model){
         return thresholdService.addOrUpdateThreshold(model);
@@ -74,6 +76,14 @@ public class SuperController {
     @GetMapping(path = "/getAllStaffs")
     public List<UserModel> getAllStaffs(){
         return userService.getAllStaffs();
+    }
+
+    @PostMapping("/uploadImage")
+    public ResponseMessage uploadImage(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new BadRequestException("Empty File");
+        }
+       return cloudinaryService.storeProductImage(file);
     }
 
 
