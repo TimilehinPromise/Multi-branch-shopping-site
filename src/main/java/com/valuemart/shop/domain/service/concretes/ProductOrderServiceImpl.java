@@ -231,7 +231,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     public OrderModel getOrder(Long orderId, Long branchId, User user){
         OrderModel model = ordersRepository.findFirstByIdAndBranchId(orderId,branchId).map(Orders::toModel).orElseThrow( );
         Wallet wallet = walletService.getWallet(user);
-        model.setDiscountedAmount(model.getAmount().subtract(wallet.getAmount()));
+//        model.setDiscountedAmount(model.getAmount().subtract(wallet.getAmount()));
         return model;
     }
 
