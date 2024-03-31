@@ -83,6 +83,7 @@ public class SuperController {
         if (file.isEmpty()) {
             throw new BadRequestException("Empty File");
         }
+        System.out.println("Processing file upload...");
        return cloudinaryService.storeProductImage(file);
     }
 

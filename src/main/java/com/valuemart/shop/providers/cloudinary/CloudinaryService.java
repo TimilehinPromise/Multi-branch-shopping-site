@@ -3,9 +3,13 @@ package com.valuemart.shop.providers.cloudinary;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.valuemart.shop.domain.ResponseMessage;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -30,10 +34,19 @@ public class CloudinaryService {
 
 
 
-    public ResponseMessage storeProductImage(Object file) {
+    public ResponseMessage storeProductImage(MultipartFile multipartFile) {
         String url = "";
         try {
-            Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+            Map<String, Object> options = new HashMap<>();
+            options.put("resource_type", "auto");
+
+            // For better handling, you can include the original file name
+            String originalFilename = multipartFile.getOriginalFilename();
+            if (originalFilename != null) {
+                options.put("public_id", FilenameUtils.getBaseName(originalFilename)); // Without extension
+            }
+
+            Map uploadResult = cloudinary.uploader().upload(multipartFile.getBytes(), options);
             url = (String) uploadResult.get("url");
         } catch (IOException e) {
             throw new RuntimeException(e);
