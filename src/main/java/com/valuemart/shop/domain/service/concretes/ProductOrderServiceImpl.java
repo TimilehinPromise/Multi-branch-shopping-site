@@ -60,7 +60,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 
     @Transactional
     @Override
-    public ResponseMessage convertCartToOrder(User user, Long addressId, String message,Boolean useWallet){
+    public ResponseMessage convertCartToOrder(User user, Long addressId, String message,boolean useWallet){
         
         userService.checkIfBranchHasBeenSet(user);
         CartModel model = cartService.listCartItems(user);
@@ -69,7 +69,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         AddressModel addressModel = userService.getAddressByAddressId(addressId, user.getId());
         BigDecimal deliveryAmount =  deliveryService.getDeliveryPriceByArea(addressModel.getCity());
 
-        BigDecimal originalAmount = model.getTotalCost().add(deliveryAmount);
+        BigDecimal originalAmount = model.getTotalCost();
         BigDecimal amount = model.getTotalCost();
 
         log.info(String.valueOf(amount));
@@ -84,14 +84,12 @@ public class ProductOrderServiceImpl implements ProductOrderService {
             if(response.getSuccessful()){
             amount = response.getAmount().add(deliveryAmount);
             model.setTotalCost(amount);
+            wallet.setAmount(BigDecimal.ZERO);
+            walletService.updateWallet(wallet);
         }}
 
         else {
             model.setTotalCost(model.getTotalCost().add(deliveryAmount));
-        }
-        if (useWallet){
-            wallet.setAmount(BigDecimal.ZERO);
-            walletService.updateWallet(wallet);
         }
 
         ThresholdDTO threshold = thresholdService.getThresholdByValueOrNearestBelow(model.getTotalCost());

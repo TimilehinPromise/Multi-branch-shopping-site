@@ -28,7 +28,7 @@ public class OrderCustomerController {
     @PostMapping("/checkout")
     private ResponseMessage checkout(@RequestBody OrderDTO orderDTO){
         User user = UserUtils.getLoggedInUser();
-       return productOrderService.convertCartToOrder(user,orderDTO.getAddressId(), orderDTO.getMessage(),orderDTO.getUseWallet());
+       return productOrderService.convertCartToOrder(user,orderDTO.getAddressId(), orderDTO.getMessage(),orderDTO.isUseWallet());
     }
 
     @GetMapping("/{orderId}/{branchId}")

@@ -6,5 +6,5 @@ import lombok.Data;
 public class OrderDTO {
     private Long addressId;
     private String message;
-    private Boolean useWallet;
+    private boolean useWallet;
 }

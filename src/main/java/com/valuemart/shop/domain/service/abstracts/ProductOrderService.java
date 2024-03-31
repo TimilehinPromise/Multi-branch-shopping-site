@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductOrderService {
-    ResponseMessage convertCartToOrder(User user, Long addressId, String message,Boolean useWallet);
+    ResponseMessage convertCartToOrder(User user, Long addressId, String message,boolean useWallet);
 
     DiscountResponse applyDiscount(User user);
 
