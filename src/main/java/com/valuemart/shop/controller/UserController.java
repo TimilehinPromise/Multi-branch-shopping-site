@@ -4,6 +4,7 @@ import com.valuemart.shop.domain.ResponseMessage;
 import com.valuemart.shop.domain.models.*;
 import com.valuemart.shop.domain.models.dto.AddressDTO;
 import com.valuemart.shop.domain.service.abstracts.UserService;
+import com.valuemart.shop.domain.service.abstracts.WalletService;
 import com.valuemart.shop.persistence.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
-import org.springframework.validation.MessageCodeFormatter;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +28,7 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 public class UserController {
 
     private final UserService userService;
+    private final WalletService walletService;
 
 
     @PostMapping("/update")
@@ -66,6 +67,12 @@ public class UserController {
     public AddressModel getAddress(@PathVariable Long addressId){
         User principal =  getLoggedInUser();
         return userService.getAddressByAddressId(addressId,principal.getId());
+    }
+
+    @GetMapping("/amount")
+    public ResponseMessage getWalletAmount(){
+        User principal = getLoggedInUser();
+        return walletService.getWalletAmount(principal);
     }
 
 }

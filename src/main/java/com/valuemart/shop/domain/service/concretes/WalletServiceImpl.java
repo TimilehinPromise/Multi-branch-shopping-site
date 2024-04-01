@@ -1,5 +1,6 @@
 package com.valuemart.shop.domain.service.concretes;
 
+import com.valuemart.shop.domain.ResponseMessage;
 import com.valuemart.shop.domain.models.UserModel;
 import com.valuemart.shop.domain.service.abstracts.WalletService;
 import com.valuemart.shop.exception.BadRequestException;
@@ -51,6 +52,17 @@ public class WalletServiceImpl implements WalletService {
             throw new BadRequestException("Wallet not found, contact admin");
         }
         return existingWallet.get();
+    }
+
+    @Override
+    public ResponseMessage getWalletAmount(User user){
+        Optional<Wallet> existingWallet = walletRepository.findFirstByUserId(user.getId());
+        if (existingWallet.isEmpty()){
+            throw new BadRequestException("Wallet not found, contact admin");
+        }
+
+        return ResponseMessage.builder().message(String.valueOf(existingWallet.get().getAmount())).build();
+
     }
 
     @Override
