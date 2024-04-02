@@ -60,6 +60,11 @@ public class SuperController {
         return deliveryService.addOrUpdateDeliveryAreas(dto);
     }
 
+    @GetMapping("/logistics")
+    public List<DeliveryModel> getAllLogistics(){
+        return deliveryService.getAll();
+    }
+
     @PostMapping("/loyalty")
     public ResponseMessage addOrUpdateLoyaltyThreshold(@RequestBody ThresholdModel model){
         return thresholdService.addOrUpdateThreshold(model);
