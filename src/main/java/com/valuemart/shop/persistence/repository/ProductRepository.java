@@ -47,5 +47,8 @@ public interface ProductRepository extends JpaRepository<Product,Long>, JpaSpeci
     Boolean existsProductByNameIgnoreCaseAndSkuIdNot(String name, String skuId);
 
 
+    long countAllByEnabledTrue();
+
+
 
 }

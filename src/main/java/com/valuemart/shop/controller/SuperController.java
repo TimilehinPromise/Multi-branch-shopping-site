@@ -1,10 +1,7 @@
 package com.valuemart.shop.controller;
 
 import com.valuemart.shop.domain.ResponseMessage;
-import com.valuemart.shop.domain.models.DeliveryModel;
-import com.valuemart.shop.domain.models.ThresholdModel;
-import com.valuemart.shop.domain.models.UserCreate;
-import com.valuemart.shop.domain.models.UserModel;
+import com.valuemart.shop.domain.models.*;
 import com.valuemart.shop.domain.models.dto.AdminLogisticDto;
 import com.valuemart.shop.domain.models.dto.DisableStaffDTO;
 import com.valuemart.shop.domain.service.abstracts.AuthenticationService;
@@ -91,6 +88,12 @@ public class SuperController {
     @GetMapping("/getAllDelivery")
     public List<DeliveryModel> getAllDeliveryArea(){
         return deliveryService.getAll();
+    }
+
+
+    @GetMapping("/stats")
+    public StatsResponse getStats(){
+        return userService.getStats();
     }
 
 

@@ -4,15 +4,18 @@ import com.valuemart.shop.domain.ResponseMessage;
 import com.valuemart.shop.domain.models.*;
 import com.valuemart.shop.domain.models.dto.AddressDTO;
 import com.valuemart.shop.domain.service.abstracts.EmailService;
+import com.valuemart.shop.domain.service.abstracts.ProductsService;
 import com.valuemart.shop.domain.service.abstracts.UserService;
 import com.valuemart.shop.domain.util.GeneratorUtils;
 import com.valuemart.shop.exception.BadRequestException;
 import com.valuemart.shop.exception.NotFoundException;
 import com.valuemart.shop.persistence.entity.Address;
 import com.valuemart.shop.persistence.entity.PasswordResetToken;
+import com.valuemart.shop.persistence.entity.PaymentStatus;
 import com.valuemart.shop.persistence.entity.User;
 import com.valuemart.shop.persistence.repository.AddressRepository;
 import com.valuemart.shop.persistence.repository.PasswordResetTokenRepository;
+import com.valuemart.shop.persistence.repository.PaymentRepository;
 import com.valuemart.shop.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +39,8 @@ public class UserServiceImpl implements UserService {
     private final AddressRepository addressRepository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final EmailService emailService;
+    private final ProductsService productsService;
+    private final PaymentRepository paymentRepository;
 
     @Value("${app.user.reset-password}")
     String userPasswordResetLink;
@@ -74,6 +79,7 @@ public class UserServiceImpl implements UserService {
     public User getUser(Long userId){
        return userRepository.findById(userId).orElseThrow();
     }
+
 
     @Override
     public User saveUser(User user) {
@@ -126,7 +132,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public AddressModel getAddressByAddressId(Long addressId, Long userId){
-        System.out.println(addressRepository.findByUserIdAndId(userId,addressId).map(Address::toModel).get());
        return addressRepository.findByUserIdAndId(userId,addressId).map(Address::toModel).get();
     }
 
@@ -212,6 +217,25 @@ public class UserServiceImpl implements UserService {
     public List<UserModel> getAllStaffs(){
         return userRepository.findAllByRoleId(Long.valueOf(2)).stream().map(User::toModel).toList();
     }
+
+    public Long getAllStaffCount(){
+        return userRepository.findAllByRoleId(Long.valueOf(2)).stream().count();
+    }
+
+
+    @Override
+    public StatsResponse getStats(){
+       Long productCount = productsService.getAllProducts();
+       Long staffCount = getAllStaffCount();
+       Long paymentCount = paymentRepository.countAllByStatus(PaymentStatus.SUCCESS);
+
+       return StatsResponse.builder()
+               .payment(paymentCount)
+               .staff(staffCount)
+               .product(productCount)
+               .build();
+    }
+
 
 
 

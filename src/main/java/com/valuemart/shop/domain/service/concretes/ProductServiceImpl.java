@@ -167,6 +167,11 @@ public class ProductServiceImpl implements ProductsService {
     }
 
     @Override
+    public long getAllProducts(){
+        return productRepository.countAllByEnabledTrue();
+    }
+
+    @Override
     public List<ProductModel> getAllProductStore(Long branchId) {
         return productRepository.findAllProductByBranch(branchId).stream().map(Product::toModel).toList();
     }

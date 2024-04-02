@@ -39,4 +39,6 @@ public interface UserService {
     UserModel getUserByRoyaltyCode(String code);
 
     List<UserModel> getAllStaffs();
+
+    StatsResponse getStats();
 }

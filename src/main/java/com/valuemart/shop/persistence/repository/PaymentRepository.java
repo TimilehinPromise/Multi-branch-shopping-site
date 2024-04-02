@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface PaymentRepository extends JpaRepository<Payment, Payment.PaymentReference> {
 
     Optional<Payment> findByPaymentReferenceReferenceIdAndStatus(String reference, PaymentStatus status);
+
+    long countAllByStatus(PaymentStatus status);
 }

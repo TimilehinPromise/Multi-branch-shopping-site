@@ -18,6 +18,8 @@ public interface ProductsService {
 
     List<ProductModel> getAllProduct();
 
+    long getAllProducts();
+
     List<ProductModel> getAllProductStore(Long branchId);
 
     List<ProductModel>  getAllProductByCategory(Long id);
