@@ -1,6 +1,7 @@
 package com.valuemart.shop.domain.service.concretes;
 
 import com.valuemart.shop.domain.ResponseMessage;
+import com.valuemart.shop.domain.models.DeliveryModel;
 import com.valuemart.shop.domain.models.dto.AdminLogisticDto;
 import com.valuemart.shop.domain.models.dto.LogisticsDto;
 import com.valuemart.shop.domain.service.abstracts.DeliveryService;
@@ -41,5 +42,10 @@ public class DeliveryServiceImpl implements DeliveryService {
             updatedAreas.add(deliveryAreaRepository.save(area));
         }
         return ResponseMessage.builder().message( "Locations updated").build();
+    }
+
+    @Override
+    public List<DeliveryModel> getAll(){
+       return deliveryAreaRepository.findAll().stream().map(DeliveryArea::toModel).toList();
     }
 }

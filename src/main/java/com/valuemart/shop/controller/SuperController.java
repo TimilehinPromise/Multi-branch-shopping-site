@@ -1,6 +1,7 @@
 package com.valuemart.shop.controller;
 
 import com.valuemart.shop.domain.ResponseMessage;
+import com.valuemart.shop.domain.models.DeliveryModel;
 import com.valuemart.shop.domain.models.ThresholdModel;
 import com.valuemart.shop.domain.models.UserCreate;
 import com.valuemart.shop.domain.models.UserModel;
@@ -85,6 +86,11 @@ public class SuperController {
         }
         System.out.println("Processing file upload...");
        return cloudinaryService.storeProductImage(file);
+    }
+
+    @GetMapping("/getAllDelivery")
+    public List<DeliveryModel> getAllDeliveryArea(){
+        return deliveryService.getAll();
     }
 
 

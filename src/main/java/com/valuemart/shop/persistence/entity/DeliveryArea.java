@@ -1,5 +1,6 @@
 package com.valuemart.shop.persistence.entity;
 
+import com.valuemart.shop.domain.models.DeliveryModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "delivery_areas")
-public class DeliveryArea {
+public class DeliveryArea implements ToModel{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,4 +25,11 @@ public class DeliveryArea {
     @Column(name = "delivery_price", nullable = false)
     private BigDecimal deliveryPrice;
 
+    @Override
+    public DeliveryModel toModel() {
+        return DeliveryModel.builder()
+                .deliveryPrice(deliveryPrice)
+                .areaName(areaName)
+                .build();
+    }
 }
