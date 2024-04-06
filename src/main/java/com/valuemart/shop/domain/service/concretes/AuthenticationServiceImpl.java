@@ -82,7 +82,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (!user.getRole().getName().equals("ROLE_STAFF")){
             throw new BadRequestException("Wrong Credentials");
         }
-        log.info(user.toString());
         log.info("user fetched");
         checkRetries(user);
 
@@ -109,14 +108,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new BadRequestException("Wrong Credentials");
         }
 
-        log.info(user.toString());
         log.info("user fetched");
         checkRetries(user);
 
         matchPassword(loginForm.getPassword(), user.getPassword(),user);
         user.setRetries(0);
         userRepository.save(user);
-        // auditEvent.publish(user, user, USER_LOGIN, AGENT);
         TokenStore store = tokenService.generatorToken(user);
         return  LoginResponseModel.builder()
                 .token(store.getToken())

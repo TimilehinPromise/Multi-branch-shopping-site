@@ -82,7 +82,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 
         if (Objects.nonNull(response)) {
             if(response.getSuccessful()){
-            amount = response.getAmount().add(deliveryAmount);
+            amount = response.getAmount();
             model.setTotalCost(amount);
             wallet.setAmount(BigDecimal.ZERO);
             walletService.updateWallet(wallet);
@@ -115,6 +115,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
                 .details(details)
                 .amount(originalAmount)
                 .discountedAmount(amount)
+                .deliveryAmount(deliveryAmount)
                 .branchId(Long.valueOf(user.getBranchId()))
                 .status(OrderStatus.PENDING)
                 .address(buildAddress(addressModel))
