@@ -162,8 +162,8 @@ public class ProductServiceImpl implements ProductsService {
 
     @Override
     public List<ProductModel> getAllProduct() {
-
-        return productRepository.findAll().stream().map(Product::toModel).toList();
+        return productRepository.findAll().stream()
+                .sorted(Comparator.comparing(Product::getCreatedAt).reversed()).map(Product::toModel).toList();
     }
 
     @Override

@@ -21,8 +21,9 @@ public interface ProductRepository extends JpaRepository<Product,Long>, JpaSpeci
     List<Product> findAllByBusinessCategoryIdAndDeletedFalse(Long categoryId);
 
 //    @Query("select p from Product p where p.deleted = false and p.branches = :branchId")
-    @Query("SELECT p FROM Product p JOIN p.branches b WHERE p.deleted = false AND b.id = :branchId")
+    @Query("SELECT p FROM Product p JOIN p.branches b WHERE p.deleted = false AND b.id = :branchId ORDER BY p.createdAt DESC")
     List<Product>findAllProductByBranch(Long branchId);
+
 
     List<Product>  findAllByBusinessSubcategoryIdAndDeletedFalse(Long subCategoryId);
 
