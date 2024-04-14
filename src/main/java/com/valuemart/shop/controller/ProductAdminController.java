@@ -41,6 +41,12 @@ public class ProductAdminController {
         return productsService.updateProduct(request);
     }
 
+    @DeleteMapping("")
+    public ResponseMessage deleteProduct(@RequestParam String skuId){
+        log.info(skuId);
+        return productsService.deleteProduct(skuId);
+    }
+
     @PostMapping("/bulk")
     public List<String>  createProductWithCsv(@RequestParam("file")MultipartFile file) {
         return productsService.processExcelFileToProducts(file);

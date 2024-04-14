@@ -106,6 +106,18 @@ public class ProductServiceImpl implements ProductsService {
         return ResponseMessageUtil.createSuccessResponse("Product " + product.getName(), "updated");
     }
 
+    @Override
+    public ResponseMessage deleteProduct(String skuId){
+
+        Product existingProduct = productRepository.findFirstBySkuIdAndDeletedFalse(skuId).get();
+
+        existingProduct.setDeleted(true);
+
+        productRepository.save(existingProduct);
+
+        return ResponseMessageUtil.createSuccessResponse("Product " + existingProduct.getName(), " deleted");
+    }
+
     private void updateExistingProductWithDTO(Product existingProduct, Product product) {
         if (!existingProduct.getName().equals(product.getName())) {
             existingProduct.setName(product.getName());
@@ -162,9 +174,11 @@ public class ProductServiceImpl implements ProductsService {
 
     @Override
     public List<ProductModel> getAllProduct() {
-        return productRepository.findAll().stream()
+        return productRepository.findAllByDeletedFalse().stream()
                 .sorted(Comparator.comparing(Product::getCreatedAt).reversed()).map(Product::toModel).toList();
     }
+
+
 
     @Override
     public long getAllProducts(){

@@ -3,10 +3,7 @@ package com.valuemart.shop.domain.models.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.valuemart.shop.domain.ProductImageModel;
 import com.valuemart.shop.domain.models.Seasons;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -19,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class ProductDTO {
 
     @NotBlank

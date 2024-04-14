@@ -16,6 +16,8 @@ public interface ProductsService {
 
     ResponseMessage updateProduct(ProductDTO dto);
 
+    ResponseMessage deleteProduct(String skuId);
+
     List<ProductModel> getAllProduct();
 
     long getAllProducts();
