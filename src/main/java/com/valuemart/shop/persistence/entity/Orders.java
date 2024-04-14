@@ -78,6 +78,7 @@ public class Orders extends BasePersistentEntity implements ToModel{
                         .orderId(id)
                         .shopResponse(shopResponse)
                         .createdAt(createdAt)
+                        .orderCode(orderCode)
                         .build();
     }
 }
