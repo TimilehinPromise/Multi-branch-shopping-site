@@ -30,6 +30,8 @@ public interface ProductOrderService {
 
     ResponseMessage updateOrderByAdmin(Long orderId, Long branchId, OrderStatus status, User user, String message);
 
+    ResponseMessage getGenerateLink(User user, String oderCode);
+
     RedirectResponse handleRedirect(RedirectDTO dto, User user);
 
     QrCodeResponse qrCodeResponse(String code);

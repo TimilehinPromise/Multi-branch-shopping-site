@@ -12,6 +12,8 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 
     Optional<Orders>findFirstByIdAndBranchId(Long id, Long branchId);
 
+    Optional<Orders>findFirstByOrderCodeAndBranchId(String code, Long branchId);
+
     List<Orders>findAllByUserIdOrderByCreatedAtDesc(Long userId);
 
     Optional<Orders> findFirstByUserIdAndStatusAndBranchIdOrderByCreatedAtDesc(Long userId, OrderStatus status,Long branchId);

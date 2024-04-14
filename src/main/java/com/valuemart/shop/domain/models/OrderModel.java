@@ -26,5 +26,6 @@ public class OrderModel {
     private Long branchId;
     private BigDecimal deliveryAmount;
     private String shopResponse;
+    private String orderCode;
     private LocalDateTime createdAt;
 }

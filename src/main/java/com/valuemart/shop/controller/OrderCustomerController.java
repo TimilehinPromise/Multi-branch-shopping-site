@@ -43,6 +43,12 @@ public class OrderCustomerController {
        return productOrderService.applyDiscount(user);
     }
 
+    @GetMapping("/generateLink")
+    private ResponseMessage generateLink(@RequestParam String code){
+        User user = UserUtils.getLoggedInUser();
+        return productOrderService.getGenerateLink(user,code);
+    }
+
 
     @GetMapping("/all")
     private List<OrderModel> getAllOrders(){
