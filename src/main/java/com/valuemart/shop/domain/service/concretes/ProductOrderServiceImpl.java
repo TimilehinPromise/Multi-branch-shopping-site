@@ -23,6 +23,7 @@ import com.valuemart.shop.persistence.repository.WalletRepository;
 import com.valuemart.shop.providers.flutterwave.FlwTransactionResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,9 @@ import java.util.*;
 @RequiredArgsConstructor
 @Transactional
 public class ProductOrderServiceImpl implements ProductOrderService {
+
+    @Value("${app.generate.order}")
+    String generatePaymentLink;
 
     private static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("Africa/Lagos");
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -278,7 +282,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         order.setStatus(status);
         order.setShopResponse(message);
         OrderModel orderModel = order.toModel();
-        String link  = "https://valuemartdev-1f65ed2b6656.herokuapp.com/v1/api/order/generateLink?code="+ orderModel.getOrderCode();
+        String link  = generatePaymentLink + orderModel.getOrderCode();
         emailService.orderResponseNotification(user, "emptylinkfornow.com", message, orderModel.getDetails(), link);
         return ResponseMessage.builder().message("Order has been set to " + status.name()).build();
     }
