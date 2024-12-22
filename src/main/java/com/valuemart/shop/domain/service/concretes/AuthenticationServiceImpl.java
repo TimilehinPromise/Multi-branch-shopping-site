@@ -180,11 +180,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .build());
                 String customerRoyaltyCode = UserUtils.generateCustomerCode(savedCustomer.getFirstName().concat(" ").concat(savedCustomer.getLastName()),savedCustomer.getId(), LocalDateTime.now());
                 savedCustomer.setRoyaltyCode(customerRoyaltyCode);
-                savedCustomer.setRoyaltyQr(qrCodeService.generateQRCodeImageAndUpload(customerRoyaltyCode));
+                //savedCustomer.setRoyaltyQr(qrCodeService.generateQRCodeImageAndUpload(customerRoyaltyCode));
                 userRepository.save(savedCustomer);
 
                 emailService.sendCustomerCreationEmail(savedCustomer);
             log.info("Customer successfully created");
+                System.out.println(passwordEncoder.encode(userCreate.getPassword()));
         return ResponseMessage.builder().message("Customer Signed Up Successfully").build();
 
         }}
@@ -299,7 +300,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (!passwordEncoder.matches(plainPassword, encryptedPassword)) {
             user.setRetries(user.getRetries()+1);
             userRepository.save(user);
-            System.out.println(user);
+            System.out.println(user.toString());
             throw invalidCredentialException();
         }
     }

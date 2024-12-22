@@ -1,5 +1,5 @@
 FROM eclipse-temurin:17-jdk-alpine
-EXPOSE 9010
+EXPOSE 9050
 VOLUME /tmp
 # Add the application's jar to the container
 ADD target/shop-0.0.1-SNAPSHOT.jar app.jar
